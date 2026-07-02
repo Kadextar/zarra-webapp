@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ZARRA — Бронирование</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0b08; --gold:#d8b878; --gold2:#e8c87f; --cream:#f1ead9;
+    --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.10);
+    --border:rgba(255,255,255,.12); --border-g:rgba(216,184,120,.55);
+    --muted:rgba(241,234,217,.55);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;}
+  body{
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(216,184,120,.20), transparent 60%),
+      radial-gradient(90% 60% at 100% 25%, rgba(120,140,90,.12), transparent 55%),
+      radial-gradient(85% 70% at 0% 85%, rgba(216,184,120,.10), transparent 60%),
+      var(--bg);
+    background-attachment:fixed;
+    color:var(--cream);
+    font-family:"Jost",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-weight:300; letter-spacing:.2px;
+    padding:20px 16px 44px; min-height:100vh;
+  }
+  .fadein{animation:fu .6s ease both;}
+  @keyframes fu{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;}}
+  .logo{text-align:center; margin:4px 0 2px;}
+  .logo b{font-family:"Cormorant Garamond",serif; font-size:32px; font-weight:700;
+    letter-spacing:10px; color:var(--cream); text-indent:10px;}
+  .logo span{display:block; font-size:9.5px; letter-spacing:5px; color:var(--gold);
+    margin-top:1px; text-transform:uppercase;}
+  h1{font-family:"Cormorant Garamond",serif; font-weight:600; font-size:32px;
+    text-align:center; margin:18px 0 6px; letter-spacing:.5px;}
+  h1 .line{display:flex; align-items:center; justify-content:center; gap:12px;
+    font-size:11px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; font-family:"Jost";}
+  h1 .line::before,h1 .line::after{content:""; width:34px; height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold));}
+  h1 .line::after{background:linear-gradient(90deg,var(--gold),transparent);}
+  .step{font-family:"Jost"; font-size:11px; letter-spacing:2.5px; color:var(--gold);
+    text-transform:uppercase; margin:26px 6px 12px; font-weight:500;}
+  .step b{opacity:.5; margin-right:7px; font-weight:400;}
+  .glass{
+    background:var(--glass);
+    -webkit-backdrop-filter:blur(22px) saturate(150%);
+    backdrop-filter:blur(22px) saturate(150%);
+    border:1px solid var(--border); border-radius:22px;
+    box-shadow:0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);
+  }
+  .cards{display:grid; gap:11px;}
+  .card{padding:16px 18px; cursor:pointer; transition:.18s; display:flex; flex-direction:column; gap:4px;}
+  .card:active{transform:scale(.985);}
+  .card.sel{border-color:var(--border-g); background:var(--glass2);
+    box-shadow:0 10px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(216,184,120,.35),
+      inset 0 1px 0 rgba(255,255,255,.12);}
+  .card .t{font-family:"Cormorant Garamond",serif; font-size:21px; font-weight:600; color:var(--cream);}
+  .card .s{font-size:12.5px; color:var(--muted); font-weight:300;}
+  .slot{flex-direction:row; justify-content:space-between; align-items:center;}
+  .slot .t{font-family:"Jost"; font-size:14px; font-weight:400;}
+  .slot .p{font-family:"Cormorant Garamond",serif; font-size:22px; font-weight:700;
+    color:var(--gold2); white-space:nowrap; font-feature-settings:"lnum" 1; font-variant-numeric:lining-nums;}
+  .field{padding:4px 6px;}
+  input,textarea{width:100%; background:transparent; border:none; color:var(--cream);
+    font-family:"Jost"; font-weight:300; font-size:16px; outline:none; padding:14px 14px;}
+  input::placeholder,textarea::placeholder{color:rgba(241,234,217,.35);}
+  input[type=date]{color-scheme:dark;}
+  textarea{resize:none; min-height:58px;}
+  label.lbl{font-size:12px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase;
+    margin:0 6px 7px; display:block;}
+  .hint{font-size:12px; color:var(--muted); margin:8px 8px 0; font-style:italic;}
+  .stepper{display:flex; align-items:center; overflow:hidden; max-width:190px;}
+  .stepper button{background:none; border:none; color:var(--gold); font-size:24px;
+    width:54px; height:54px; cursor:pointer;}
+  .stepper input{text-align:center; font-weight:500; font-size:18px;}
+  .note{padding:15px 17px; font-size:12.5px; color:var(--muted); margin-top:26px; line-height:1.6;}
+  .note b{color:var(--gold2); font-weight:400;}
+  .submit{width:100%; margin-top:24px; border:none; border-radius:20px; padding:17px;
+    font-family:"Jost"; font-size:16px; font-weight:600; letter-spacing:.5px; cursor:pointer;
+    color:#1a1407; background:linear-gradient(135deg,var(--gold2),var(--gold));
+    box-shadow:0 8px 30px rgba(216,184,120,.28);}
+  .submit:disabled{opacity:.35; box-shadow:none;}
+  .row12{height:12px;}
+</style>
+</head>
+<body>
+  <div class="logo fadein"><b>ZARRA</b><span>Hotel &amp; Resort</span></div>
+  <h1 class="fadein" style="animation-delay:.05s">Бронирование
+    <div class="line">заявку передадим сотруднику</div>
+  </h1>
+
+  <div class="step fadein" style="animation-delay:.1s"><b>01</b>Выберите шале</div>
+  <div class="cards" id="chalets"></div>
+
+  <div class="step"><b>02</b>Дата заезда</div>
+  <div class="glass field"><input type="date" id="date"></div>
+  <div class="hint" id="dateHint"></div>
+
+  <div class="step"><b>03</b>Тариф (слот)</div>
+  <div class="cards" id="slots"></div>
+
+  <div class="step"><b>04</b>Гости и контакты</div>
+  <label class="lbl">Сколько гостей всего</label>
+  <div class="glass stepper">
+    <button type="button" onclick="stepGuests(-1)">−</button>
+    <input type="number" id="guests" value="2" min="1" max="20" inputmode="numeric">
+    <button type="button" onclick="stepGuests(1)">+</button>
+  </div>
+  <div class="row12"></div>
+  <label class="lbl">Имя</label>
+  <div class="glass field"><input type="text" id="name" placeholder="Ваше имя"></div>
+  <div class="row12"></div>
+  <label class="lbl">Телефон</label>
+  <div class="glass field"><input type="tel" id="phone" placeholder="+998 __ ___ __ __"></div>
+  <div class="row12"></div>
+  <label class="lbl">Пожелания · необязательно</label>
+  <div class="glass field"><textarea id="comment" placeholder="День рождения, торт, оформление…"></textarea></div>
+
+  <button class="submit" id="btn" disabled onclick="submitForm()">Отправить заявку</button>
+
+  <div class="note glass">
+    Выходные (Сб, Вс) и праздники — <b>+20%</b>. Для подтверждения нужна предоплата
+    <b>50%</b>, возврат при отмене за 3+ дня. Бронь подтверждает наш сотрудник — он свяжется с вами.
+  </div>
+
+<script>
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor("#0a0b08"); tg.setBackgroundColor("#0a0b08"); }catch(e){} }
+
+const HOLIDAYS = ["2026-01-01","2026-01-14","2026-03-08","2026-03-20","2026-03-21",
+  "2026-05-09","2026-05-27","2026-09-01","2026-10-01","2026-12-08"];
+
+const PRICES = {
+  comfort:{name:"Шале «Комфорт»", cap:"ночёвка до 2 · до 10 гостей днём",
+    wd:{1:"1,5 млн",2:"2 млн",3:"3 млн"}, we:{1:"1,8 млн",2:"2,4 млн",3:"3,6 млн"}},
+  lux:{name:"«Президент Люкс»", cap:"ночёвка до 7 · до 20 гостей",
+    wd:{1:"3 млн",2:"4 млн",3:"6 млн"}, we:{1:"3,6 млн",2:"4,8 млн",3:"7,2 млн"}},
+};
+const SLOTS = {1:"☀️ День · 10:00–17:00", 2:"🌙 Ночь · 18:00–09:00", 3:"🌗 Полный день · 10:00–09:00"};
+
+const state = {chalet:null, date:"", slot:null};
+
+const chEl = document.getElementById("chalets");
+Object.keys(PRICES).forEach(key=>{
+  const p = PRICES[key];
+  const d = document.createElement("div");
+  d.className = "glass card"; d.dataset.k = key;
+  d.innerHTML = `<div class="t">${p.name}</div><div class="s">${p.cap}</div>`;
+  d.onclick = ()=>{ state.chalet=key;
+    document.querySelectorAll("#chalets .card").forEach(c=>c.classList.remove("sel"));
+    d.classList.add("sel"); renderSlots(); validate(); };
+  chEl.appendChild(d);
+});
+
+const dateEl = document.getElementById("date");
+const today = new Date(); today.setHours(0,0,0,0);
+const max = new Date(today); max.setDate(max.getDate()+120);
+dateEl.min = iso(today); dateEl.max = iso(max);
+dateEl.onchange = ()=>{ state.date = dateEl.value; showDateHint(); renderSlots(); validate(); };
+
+function iso(d){ const z=n=>String(n).padStart(2,"0");
+  return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
+function isWeekend(s){
+  if(!s) return false;
+  const d = new Date(s+"T00:00:00"); const wd = d.getDay();
+  return wd===0 || wd===6 || HOLIDAYS.indexOf(s)>=0;
+}
+function showDateHint(){
+  const h = document.getElementById("dateHint");
+  if(!state.date){ h.textContent=""; return; }
+  h.textContent = isWeekend(state.date) ? "Выходной / праздник — цена +20%" : "Будний день — базовая цена";
+}
+function renderSlots(){
+  const el = document.getElementById("slots"); el.innerHTML="";
+  if(!state.chalet){ el.innerHTML='<div class="hint">Сначала выберите шале</div>'; return; }
+  const we = isWeekend(state.date);
+  const price = we ? PRICES[state.chalet].we : PRICES[state.chalet].wd;
+  [1,2,3].forEach(s=>{
+    const d = document.createElement("div");
+    d.className = "glass card slot" + (state.slot==s?" sel":"");
+    d.innerHTML = `<div class="t">${SLOTS[s]}</div><div class="p">${price[s]}</div>`;
+    d.onclick = ()=>{ state.slot=s; renderSlots(); validate(); };
+    el.appendChild(d);
+  });
+}
+renderSlots();
+
+function stepGuests(n){
+  const g = document.getElementById("guests");
+  let v = (parseInt(g.value)||1)+n; v=Math.max(1,Math.min(20,v)); g.value=v; validate();
+}
+["guests","name","phone"].forEach(id=>document.getElementById(id).addEventListener("input",validate));
+
+function digits(s){ return (s.match(/\d/g)||[]).length; }
+function validate(){
+  const ok = state.chalet && state.date && state.slot &&
+    (parseInt(document.getElementById("guests").value)>0) &&
+    document.getElementById("name").value.trim().length>=2 &&
+    digits(document.getElementById("phone").value)>=7;
+  document.getElementById("btn").disabled = !ok;
+  if(tg && tg.MainButton){
+    if(ok){ tg.MainButton.setText("Отправить заявку"); tg.MainButton.show(); }
+    else { tg.MainButton.hide(); }
+  }
+  return ok;
+}
+if(tg && tg.MainButton){ tg.MainButton.onClick(submitForm);
+  try{ tg.MainButton.setParams({color:"#d8b878", text_color:"#1a1407"}); }catch(e){} }
+
+function submitForm(){
+  if(!validate()) return;
+  const payload = {
+    src:"webapp", chalet: state.chalet, date: state.date, slot: String(state.slot),
+    guests: String(parseInt(document.getElementById("guests").value)||""),
+    name: document.getElementById("name").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    comment: document.getElementById("comment").value.trim(),
+  };
+  if(tg && tg.sendData){ tg.sendData(JSON.stringify(payload)); }
+  else { alert("Откройте это приложение из Telegram-бота, чтобы отправить заявку."); }
+}
+</script>
+</body>
+</html>

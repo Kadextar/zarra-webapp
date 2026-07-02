@@ -19,113 +19,129 @@
   html,body{margin:0;}
   body{
     background:
-      radial-gradient(120% 80% at 50% -10%, rgba(216,184,120,.20), transparent 60%),
-      radial-gradient(90% 60% at 100% 25%, rgba(120,140,90,.12), transparent 55%),
-      radial-gradient(85% 70% at 0% 85%, rgba(216,184,120,.10), transparent 60%),
+      radial-gradient(120% 70% at 50% 0%, rgba(216,184,120,.16), transparent 60%),
+      radial-gradient(90% 60% at 100% 30%, rgba(120,140,90,.10), transparent 55%),
       var(--bg);
-    background-attachment:fixed;
-    color:var(--cream);
-    font-family:"Jost",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    font-weight:300; letter-spacing:.2px;
-    padding:20px 16px 44px; min-height:100vh;
+    background-attachment:fixed; color:var(--cream);
+    font-family:"Jost",-apple-system,BlinkMacSystemFont,sans-serif; font-weight:300; letter-spacing:.2px;
+    padding:0 0 44px; min-height:100vh;
   }
+  .wrap{padding:0 16px;}
   .fadein{animation:fu .6s ease both;}
   @keyframes fu{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;}}
-  .logo{text-align:center; margin:4px 0 2px;}
-  .logo b{font-family:"Cormorant Garamond",serif; font-size:32px; font-weight:700;
-    letter-spacing:10px; color:var(--cream); text-indent:10px;}
-  .logo span{display:block; font-size:9.5px; letter-spacing:5px; color:var(--gold);
-    margin-top:1px; text-transform:uppercase;}
-  h1{font-family:"Cormorant Garamond",serif; font-weight:600; font-size:32px;
-    text-align:center; margin:18px 0 6px; letter-spacing:.5px;}
-  h1 .line{display:flex; align-items:center; justify-content:center; gap:12px;
-    font-size:11px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; font-family:"Jost";}
-  h1 .line::before,h1 .line::after{content:""; width:34px; height:1px;
-    background:linear-gradient(90deg,transparent,var(--gold));}
+  /* Hero */
+  .hero{position:relative; height:210px; overflow:hidden; border-radius:0 0 26px 26px; margin-bottom:6px;}
+  .hero img{width:100%; height:100%; object-fit:cover; display:block;}
+  .hero::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(10,11,8,.35) 0%, rgba(10,11,8,.15) 40%, rgba(10,11,8,.95) 100%);}
+  .hero .cap{position:absolute; left:0; right:0; bottom:16px; text-align:center; z-index:2;}
+  .hero .cap b{font-family:"Cormorant Garamond",serif; font-size:34px; font-weight:700; letter-spacing:11px; text-indent:11px; color:#fff;}
+  .hero .cap span{display:block; font-size:9.5px; letter-spacing:5px; color:var(--gold2); text-transform:uppercase; margin-top:1px;}
+  .langs{position:absolute; top:12px; right:12px; z-index:3; display:flex; gap:6px;}
+  .langs button{background:rgba(10,11,8,.45); border:1px solid rgba(255,255,255,.18); color:var(--cream);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    border-radius:20px; padding:5px 10px; font-family:"Jost"; font-size:12px; cursor:pointer;}
+  .langs button.on{background:var(--gold); color:#1a1407; border-color:var(--gold);}
+  h1{font-family:"Cormorant Garamond",serif; font-weight:600; font-size:30px; text-align:center; margin:16px 0 4px;}
+  h1 .line{display:flex; align-items:center; justify-content:center; gap:12px; font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; font-family:"Jost";}
+  h1 .line::before,h1 .line::after{content:""; width:30px; height:1px; background:linear-gradient(90deg,transparent,var(--gold));}
   h1 .line::after{background:linear-gradient(90deg,var(--gold),transparent);}
-  .step{font-family:"Jost"; font-size:11px; letter-spacing:2.5px; color:var(--gold);
-    text-transform:uppercase; margin:26px 6px 12px; font-weight:500;}
+  .step{font-size:11px; letter-spacing:2.5px; color:var(--gold); text-transform:uppercase; margin:26px 6px 12px; font-weight:500;}
   .step b{opacity:.5; margin-right:7px; font-weight:400;}
-  .glass{
-    background:var(--glass);
-    -webkit-backdrop-filter:blur(22px) saturate(150%);
-    backdrop-filter:blur(22px) saturate(150%);
-    border:1px solid var(--border); border-radius:22px;
-    box-shadow:0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);
-  }
-  .cards{display:grid; gap:11px;}
-  .card{padding:16px 18px; cursor:pointer; transition:.18s; display:flex; flex-direction:column; gap:4px;}
-  .card:active{transform:scale(.985);}
-  .card.sel{border-color:var(--border-g); background:var(--glass2);
-    box-shadow:0 10px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(216,184,120,.35),
-      inset 0 1px 0 rgba(255,255,255,.12);}
-  .card .t{font-family:"Cormorant Garamond",serif; font-size:21px; font-weight:600; color:var(--cream);}
-  .card .s{font-size:12.5px; color:var(--muted); font-weight:300;}
-  .slot{flex-direction:row; justify-content:space-between; align-items:center;}
-  .slot .t{font-family:"Jost"; font-size:14px; font-weight:400;}
-  .slot .p{font-family:"Cormorant Garamond",serif; font-size:22px; font-weight:700;
-    color:var(--gold2); white-space:nowrap; font-feature-settings:"lnum" 1; font-variant-numeric:lining-nums;}
-  .field{padding:4px 6px;}
-  input,textarea{width:100%; background:transparent; border:none; color:var(--cream);
-    font-family:"Jost"; font-weight:300; font-size:16px; outline:none; padding:14px 14px;}
+  .glass{background:var(--glass); -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
+    border:1px solid var(--border); border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);}
+  .cards{display:grid; gap:12px;}
+  .chalet{overflow:hidden; cursor:pointer; transition:.18s;}
+  .chalet:active{transform:scale(.99);}
+  .chalet img{width:100%; height:130px; object-fit:cover; display:block;}
+  .chalet .body{padding:12px 16px 14px;}
+  .chalet .t{font-family:"Cormorant Garamond",serif; font-size:22px; font-weight:600;}
+  .chalet .s{font-size:12.5px; color:var(--muted);}
+  .chalet.sel{border-color:var(--border-g); box-shadow:0 10px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(216,184,120,.4);}
+  .slot{padding:15px 17px; cursor:pointer; transition:.18s; display:flex; justify-content:space-between; align-items:center;}
+  .slot:active{transform:scale(.99);}
+  .slot.sel{border-color:var(--border-g); background:var(--glass2); box-shadow:0 10px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(216,184,120,.35);}
+  .slot .t{font-size:14px;}
+  .slot .p{font-family:"Cormorant Garamond",serif; font-size:22px; font-weight:700; color:var(--gold2); white-space:nowrap; font-variant-numeric:lining-nums;}
+  .field{padding:2px 6px;}
+  input,textarea{width:100%; background:transparent; border:none; color:var(--cream); font-family:"Jost"; font-weight:300; font-size:16px; outline:none; padding:14px;}
   input::placeholder,textarea::placeholder{color:rgba(241,234,217,.35);}
   input[type=date]{color-scheme:dark;}
-  textarea{resize:none; min-height:58px;}
-  label.lbl{font-size:12px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase;
-    margin:0 6px 7px; display:block;}
+  textarea{resize:none; min-height:56px;}
+  label.lbl{font-size:12px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin:0 6px 7px; display:block;}
   .hint{font-size:12px; color:var(--muted); margin:8px 8px 0; font-style:italic;}
   .stepper{display:flex; align-items:center; overflow:hidden; max-width:190px;}
-  .stepper button{background:none; border:none; color:var(--gold); font-size:24px;
-    width:54px; height:54px; cursor:pointer;}
+  .stepper button{background:none; border:none; color:var(--gold); font-size:24px; width:54px; height:54px; cursor:pointer;}
   .stepper input{text-align:center; font-weight:500; font-size:18px;}
-  .note{padding:15px 17px; font-size:12.5px; color:var(--muted); margin-top:26px; line-height:1.6;}
-  .note b{color:var(--gold2); font-weight:400;}
-  .submit{width:100%; margin-top:24px; border:none; border-radius:20px; padding:17px;
-    font-family:"Jost"; font-size:16px; font-weight:600; letter-spacing:.5px; cursor:pointer;
-    color:#1a1407; background:linear-gradient(135deg,var(--gold2),var(--gold));
-    box-shadow:0 8px 30px rgba(216,184,120,.28);}
-  .submit:disabled{opacity:.35; box-shadow:none;}
   .row12{height:12px;}
+  .submit{width:100%; margin-top:24px; border:none; border-radius:18px; padding:17px; font-family:"Jost"; font-size:16px; font-weight:600; letter-spacing:.5px; cursor:pointer;
+    color:#1a1407; background:linear-gradient(135deg,var(--gold2),var(--gold)); box-shadow:0 8px 30px rgba(216,184,120,.28);}
+  .submit:disabled{opacity:.35; box-shadow:none;}
+  .note{padding:15px 17px; font-size:12.5px; color:var(--muted); margin-top:22px; line-height:1.6;}
+  .note b{color:var(--gold2); font-weight:400;}
+  /* Menu */
+  .menu-toggle{width:100%; margin-top:30px; background:var(--glass); border:1px solid var(--border);
+    -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px); border-radius:18px; color:var(--cream);
+    font-family:"Jost"; font-size:15px; padding:16px; cursor:pointer;}
+  #menu{display:none; margin-top:14px;}
+  #menu.open{display:block;}
+  .mcat{padding:14px 17px; margin-bottom:11px;}
+  .mcat h3{font-family:"Cormorant Garamond",serif; color:var(--gold2); font-size:20px; font-weight:600; margin:0 0 8px;}
+  .mrow{display:flex; justify-content:space-between; gap:12px; padding:5px 0; font-size:14px; border-bottom:1px dashed rgba(255,255,255,.07);}
+  .mrow:last-child{border-bottom:none;}
+  .mrow .pr{color:var(--gold2); white-space:nowrap; font-variant-numeric:lining-nums;}
+  .mnote{text-align:center; font-size:12px; color:var(--muted); margin:2px 0 6px; font-style:italic;}
 </style>
 </head>
 <body>
-  <div class="logo fadein"><b>ZARRA</b><span>Hotel &amp; Resort</span></div>
-  <h1 class="fadein" style="animation-delay:.05s">Бронирование
-    <div class="line">заявку передадим сотруднику</div>
-  </h1>
-
-  <div class="step fadein" style="animation-delay:.1s"><b>01</b>Выберите шале</div>
-  <div class="cards" id="chalets"></div>
-
-  <div class="step"><b>02</b>Дата заезда</div>
-  <div class="glass field"><input type="date" id="date"></div>
-  <div class="hint" id="dateHint"></div>
-
-  <div class="step"><b>03</b>Тариф (слот)</div>
-  <div class="cards" id="slots"></div>
-
-  <div class="step"><b>04</b>Гости и контакты</div>
-  <label class="lbl">Сколько гостей всего</label>
-  <div class="glass stepper">
-    <button type="button" onclick="stepGuests(-1)">−</button>
-    <input type="number" id="guests" value="2" min="1" max="20" inputmode="numeric">
-    <button type="button" onclick="stepGuests(1)">+</button>
+  <div class="hero fadein">
+    <img src="img/hero.jpg" alt="">
+    <div class="langs">
+      <button data-l="ru" onclick="setLang('ru')">RU</button>
+      <button data-l="uz" onclick="setLang('uz')">UZ</button>
+      <button data-l="en" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="cap"><b>ZARRA</b><span>Hotel &amp; Resort</span></div>
   </div>
-  <div class="row12"></div>
-  <label class="lbl">Имя</label>
-  <div class="glass field"><input type="text" id="name" placeholder="Ваше имя"></div>
-  <div class="row12"></div>
-  <label class="lbl">Телефон</label>
-  <div class="glass field"><input type="tel" id="phone" placeholder="+998 __ ___ __ __"></div>
-  <div class="row12"></div>
-  <label class="lbl">Пожелания · необязательно</label>
-  <div class="glass field"><textarea id="comment" placeholder="День рождения, торт, оформление…"></textarea></div>
 
-  <button class="submit" id="btn" disabled onclick="submitForm()">Отправить заявку</button>
+  <div class="wrap">
+    <h1><span id="t_title">Бронирование</span>
+      <div class="line" id="t_sub">заявку передадим сотруднику</div>
+    </h1>
 
-  <div class="note glass">
-    Выходные (Сб, Вс) и праздники — <b>+20%</b>. Для подтверждения нужна предоплата
-    <b>50%</b>, возврат при отмене за 3+ дня. Бронь подтверждает наш сотрудник — он свяжется с вами.
+    <div class="step"><b>01</b><span id="t_s_chalet">Выберите шале</span></div>
+    <div class="cards" id="chalets"></div>
+
+    <div class="step"><b>02</b><span id="t_s_date">Дата заезда</span></div>
+    <div class="glass field"><input type="date" id="date"></div>
+    <div class="hint" id="dateHint"></div>
+
+    <div class="step"><b>03</b><span id="t_s_slot">Тариф (слот)</span></div>
+    <div class="cards" id="slots"></div>
+
+    <div class="step"><b>04</b><span id="t_s_contacts">Гости и контакты</span></div>
+    <label class="lbl" id="t_lbl_guests">Сколько гостей всего</label>
+    <div class="glass stepper">
+      <button type="button" onclick="stepGuests(-1)">−</button>
+      <input type="number" id="guests" value="2" min="1" max="20" inputmode="numeric">
+      <button type="button" onclick="stepGuests(1)">+</button>
+    </div>
+    <div class="row12"></div>
+    <label class="lbl" id="t_lbl_name">Имя</label>
+    <div class="glass field"><input type="text" id="name"></div>
+    <div class="row12"></div>
+    <label class="lbl" id="t_lbl_phone">Телефон</label>
+    <div class="glass field"><input type="tel" id="phone" placeholder="+998 __ ___ __ __"></div>
+    <div class="row12"></div>
+    <label class="lbl" id="t_lbl_comment">Пожелания</label>
+    <div class="glass field"><textarea id="comment"></textarea></div>
+
+    <button class="submit" id="btn" disabled onclick="submitForm()">Отправить заявку</button>
+
+    <div class="note glass" id="t_note"></div>
+
+    <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">🍽 Меню ресторана</button>
+    <div id="menu"><div class="mnote" id="t_mnote">Цены в сумах</div></div>
   </div>
 
 <script>
@@ -135,95 +151,177 @@ if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor("#0a0b08"); tg.setBack
 const HOLIDAYS = ["2026-01-01","2026-01-14","2026-03-08","2026-03-20","2026-03-21",
   "2026-05-09","2026-05-27","2026-09-01","2026-10-01","2026-12-08"];
 
-const PRICES = {
-  comfort:{name:"Шале «Комфорт»", cap:"ночёвка до 2 · до 10 гостей днём",
+const T = {
+  title:{ru:"Бронирование",uz:"Bron qilish",en:"Booking"},
+  sub:{ru:"заявку передадим сотруднику",uz:"arizani xodimga yuboramiz",en:"we'll pass it to our staff"},
+  s_chalet:{ru:"Выберите шале",uz:"Shaleni tanlang",en:"Choose a chalet"},
+  s_date:{ru:"Дата заезда",uz:"Kelish sanasi",en:"Check-in date"},
+  s_slot:{ru:"Тариф (слот)",uz:"Tarif (slot)",en:"Rate (slot)"},
+  s_contacts:{ru:"Гости и контакты",uz:"Mehmonlar va aloqa",en:"Guests & contacts"},
+  lbl_guests:{ru:"Сколько гостей всего",uz:"Jami nechta mehmon",en:"Guests in total"},
+  lbl_name:{ru:"Имя",uz:"Ism",en:"Name"},
+  lbl_phone:{ru:"Телефон",uz:"Telefon",en:"Phone"},
+  lbl_comment:{ru:"Пожелания · необязательно",uz:"Istaklar · ixtiyoriy",en:"Wishes · optional"},
+  ph_name:{ru:"Ваше имя",uz:"Ismingiz",en:"Your name"},
+  ph_comment:{ru:"День рождения, торт, оформление…",uz:"Tug‘ilgan kun, tort, bezak…",en:"Birthday, cake, decor…"},
+  submit:{ru:"Отправить заявку",uz:"Arizani yuborish",en:"Send request"},
+  note:{ru:"Выходные (Сб, Вс) и праздники — +20%. Для подтверждения нужна предоплата 50%, возврат при отмене за 3+ дня. Бронь подтверждает наш сотрудник — он свяжется с вами.",
+        uz:"Dam olish kunlari (Sha, Yak) va bayramlar — +20%. Tasdiqlash uchun 50% oldindan to‘lov, 3+ kun oldin bekor qilinsa qaytariladi. Bronni xodimimiz tasdiqlaydi — u siz bilan bog‘lanadi.",
+        en:"Weekends (Sat, Sun) and holidays — +20%. A 50% prepayment confirms the booking, refundable if cancelled 3+ days ahead. Our staff confirms and will contact you."},
+  hint_we:{ru:"Выходной / праздник — цена +20%",uz:"Dam olish / bayram — +20%",en:"Weekend / holiday — +20%"},
+  hint_wd:{ru:"Будний день — базовая цена",uz:"Ish kuni — asosiy narx",en:"Weekday — base price"},
+  pick_first:{ru:"Сначала выберите шале",uz:"Avval shaleni tanlang",en:"Choose a chalet first"},
+  menu_show:{ru:"🍽 Меню ресторана",uz:"🍽 Restoran menyusi",en:"🍽 Restaurant menu"},
+  menu_hide:{ru:"🍽 Скрыть меню",uz:"🍽 Menyuni yashirish",en:"🍽 Hide menu"},
+  mnote:{ru:"Цены в сумах",uz:"Narxlar so‘mda",en:"Prices in UZS"},
+  not_tg:{ru:"Откройте приложение из Telegram-бота, чтобы отправить заявку.",
+          uz:"Arizani yuborish uchun ilovani Telegram-botdan oching.",
+          en:"Open this app from the Telegram bot to send a request."},
+};
+
+const CH = {
+  comfort:{name:{ru:"Шале «Комфорт»",uz:"«Komfort» shale",en:"“Comfort” chalet"},
+    cap:{ru:"ночёвка до 2 · до 10 гостей днём",uz:"tunash 2 gacha · kunduzi 10 mehmon",en:"overnight up to 2 · up to 10 daytime"},
+    img:"img/comfort.jpg", maxg:10,
     wd:{1:"1,5 млн",2:"2 млн",3:"3 млн"}, we:{1:"1,8 млн",2:"2,4 млн",3:"3,6 млн"}},
-  lux:{name:"«Президент Люкс»", cap:"ночёвка до 7 · до 20 гостей",
+  lux:{name:{ru:"«Президент Люкс»",uz:"«Prezident Lyuks»",en:"“President Lux”"},
+    cap:{ru:"ночёвка до 7 · до 20 гостей",uz:"tunash 7 gacha · 20 mehmongacha",en:"overnight up to 7 · up to 20 guests"},
+    img:"img/lux.jpg", maxg:20,
     wd:{1:"3 млн",2:"4 млн",3:"6 млн"}, we:{1:"3,6 млн",2:"4,8 млн",3:"7,2 млн"}},
 };
-const SLOTS = {1:"☀️ День · 10:00–17:00", 2:"🌙 Ночь · 18:00–09:00", 3:"🌗 Полный день · 10:00–09:00"};
+const SLOT={
+  1:{ru:"☀️ День · 10:00–17:00",uz:"☀️ Kunduzi · 10:00–17:00",en:"☀️ Day · 10:00–17:00"},
+  2:{ru:"🌙 Ночь · 18:00–09:00",uz:"🌙 Tun · 18:00–09:00",en:"🌙 Night · 18:00–09:00"},
+  3:{ru:"🌗 Полный день · 10:00–09:00",uz:"🌗 To‘liq kun · 10:00–09:00",en:"🌗 Full day · 10:00–09:00"},
+};
+const MENU=[
+  {c:{ru:"Шашлыки",uz:"Shashliklar",en:"Kebabs"}, it:[["Молотый шашлык","50 000"],["Корейка","85 000"],["Куриное бедро","45 000"],["Куриное филе","38 000"],["Куриные крылышки","40 000"]]},
+  {c:{ru:"Жиз",uz:"Jiz",en:"Jiz (roast)"}, it:[["Жиз Бон-филе (вырезка)","400 000 / кг"],["Жиз из корейки","350 000 / кг"]]},
+  {c:{ru:"Сеты и закуски",uz:"Setlar va gazaklar",en:"Sets & snacks"}, it:[["Пивной сет","120 000"],["Копчёная рыба","100 000"],["Чакка","20 000"],["Свежий салат","40 000"],["Лимон","15 000"],["Хлеб ассорти","26 000"]]},
+  {c:{ru:"Безалкогольные",uz:"Alkogolsiz",en:"Soft drinks"}, it:[["Кола / Фанта / Спрайт (1,5 л)","25 000"],["Минеральная вода (1,5 л)","15 000"],["Chortoq (0,5 л)","25 000"],["Сок ассорти","20 000"]]},
+  {c:{ru:"Пиво",uz:"Pivo",en:"Beer"}, it:[["Президент (0,5 л)","20 000"],["Шымкент (0,5 л)","25 000"],["Злата 10 (0,5 л)","20 000"],["Эфес","35 000"]]},
+  {c:{ru:"Чай",uz:"Choy",en:"Tea"}, it:[["Чёрный / Зелёный","10 000"],["Лимонный","20 000"]]},
+  {c:{ru:"Крепкие напитки",uz:"Kuchli ichimliklar",en:"Spirits"}, it:[["E Factor (0,5 л)","100 000"],["New Uzbekistan (0,5 л)","110 000"],["Gold UZB (0,7 л)","280 000"],["Столичное (0,5 л)","140 000"]]},
+];
 
+let lang = "ru";
 const state = {chalet:null, date:"", slot:null};
 
-const chEl = document.getElementById("chalets");
-Object.keys(PRICES).forEach(key=>{
-  const p = PRICES[key];
-  const d = document.createElement("div");
-  d.className = "glass card"; d.dataset.k = key;
-  d.innerHTML = `<div class="t">${p.name}</div><div class="s">${p.cap}</div>`;
-  d.onclick = ()=>{ state.chalet=key;
-    document.querySelectorAll("#chalets .card").forEach(c=>c.classList.remove("sel"));
-    d.classList.add("sel"); renderSlots(); validate(); };
-  chEl.appendChild(d);
-});
+function tr(o){ return o[lang] || o.ru; }
+function iso(d){ const z=n=>String(n).padStart(2,"0"); return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
+function isWeekend(s){ if(!s) return false; const d=new Date(s+"T00:00:00"); const wd=d.getDay(); return wd===0||wd===6||HOLIDAYS.indexOf(s)>=0; }
+function digits(s){ return (s.match(/\d/g)||[]).length; }
 
-const dateEl = document.getElementById("date");
-const today = new Date(); today.setHours(0,0,0,0);
-const max = new Date(today); max.setDate(max.getDate()+120);
-dateEl.min = iso(today); dateEl.max = iso(max);
-dateEl.onchange = ()=>{ state.date = dateEl.value; showDateHint(); renderSlots(); validate(); };
-
-function iso(d){ const z=n=>String(n).padStart(2,"0");
-  return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
-function isWeekend(s){
-  if(!s) return false;
-  const d = new Date(s+"T00:00:00"); const wd = d.getDay();
-  return wd===0 || wd===6 || HOLIDAYS.indexOf(s)>=0;
-}
-function showDateHint(){
-  const h = document.getElementById("dateHint");
-  if(!state.date){ h.textContent=""; return; }
-  h.textContent = isWeekend(state.date) ? "Выходной / праздник — цена +20%" : "Будний день — базовая цена";
-}
-function renderSlots(){
-  const el = document.getElementById("slots"); el.innerHTML="";
-  if(!state.chalet){ el.innerHTML='<div class="hint">Сначала выберите шале</div>'; return; }
-  const we = isWeekend(state.date);
-  const price = we ? PRICES[state.chalet].we : PRICES[state.chalet].wd;
-  [1,2,3].forEach(s=>{
-    const d = document.createElement("div");
-    d.className = "glass card slot" + (state.slot==s?" sel":"");
-    d.innerHTML = `<div class="t">${SLOTS[s]}</div><div class="p">${price[s]}</div>`;
-    d.onclick = ()=>{ state.slot=s; renderSlots(); validate(); };
+function renderChalets(){
+  const el=document.getElementById("chalets"); el.innerHTML="";
+  Object.keys(CH).forEach(key=>{
+    const p=CH[key];
+    const d=document.createElement("div");
+    d.className="glass chalet"+(state.chalet===key?" sel":"");
+    d.innerHTML=`<img src="${p.img}" alt=""><div class="body"><div class="t">${tr(p.name)}</div><div class="s">${tr(p.cap)}</div></div>`;
+    d.onclick=()=>{ state.chalet=key;
+      const g=document.getElementById("guests"); if(parseInt(g.value)>p.maxg) g.value=p.maxg; g.max=p.maxg;
+      renderChalets(); renderSlots(); validate(); };
     el.appendChild(d);
   });
 }
-renderSlots();
+function renderSlots(){
+  const el=document.getElementById("slots"); el.innerHTML="";
+  if(!state.chalet){ el.innerHTML=`<div class="hint">${tr(T.pick_first)}</div>`; return; }
+  const price=isWeekend(state.date)?CH[state.chalet].we:CH[state.chalet].wd;
+  [1,2,3].forEach(s=>{
+    const d=document.createElement("div");
+    d.className="glass slot"+(state.slot==s?" sel":"");
+    d.innerHTML=`<div class="t">${tr(SLOT[s])}</div><div class="p">${price[s]}</div>`;
+    d.onclick=()=>{ state.slot=s; renderSlots(); validate(); };
+    el.appendChild(d);
+  });
+}
+function renderMenu(){
+  const el=document.getElementById("menu");
+  let html=`<div class="mnote">${tr(T.mnote)}</div>`;
+  MENU.forEach(cat=>{
+    html+=`<div class="glass mcat"><h3>${tr(cat.c)}</h3>`;
+    cat.it.forEach(r=>{ html+=`<div class="mrow"><span>${r[0]}</span><span class="pr">${r[1]}</span></div>`; });
+    html+=`</div>`;
+  });
+  el.innerHTML=html; el.dataset.built="1";
+}
+function showDateHint(){
+  const h=document.getElementById("dateHint");
+  h.textContent = state.date ? (isWeekend(state.date)?tr(T.hint_we):tr(T.hint_wd)) : "";
+}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.getElementById("t_title").textContent=tr(T.title);
+  document.getElementById("t_sub").textContent=tr(T.sub);
+  document.getElementById("t_s_chalet").textContent=tr(T.s_chalet);
+  document.getElementById("t_s_date").textContent=tr(T.s_date);
+  document.getElementById("t_s_slot").textContent=tr(T.s_slot);
+  document.getElementById("t_s_contacts").textContent=tr(T.s_contacts);
+  document.getElementById("t_lbl_guests").textContent=tr(T.lbl_guests);
+  document.getElementById("t_lbl_name").textContent=tr(T.lbl_name);
+  document.getElementById("t_lbl_phone").textContent=tr(T.lbl_phone);
+  document.getElementById("t_lbl_comment").textContent=tr(T.lbl_comment);
+  document.getElementById("name").placeholder=tr(T.ph_name);
+  document.getElementById("comment").placeholder=tr(T.ph_comment);
+  document.getElementById("btn").textContent=tr(T.submit);
+  document.getElementById("t_note").textContent=tr(T.note);
+  const mOpen=document.getElementById("menu").classList.contains("open");
+  document.getElementById("menuToggle").textContent=mOpen?tr(T.menu_hide):tr(T.menu_show);
+  document.querySelectorAll(".langs button").forEach(b=>b.classList.toggle("on",b.dataset.l===lang));
+  renderChalets(); renderSlots(); showDateHint();
+  if(document.getElementById("menu").dataset.built) renderMenu();
+  if(tg&&tg.MainButton&&!document.getElementById("btn").disabled) tg.MainButton.setText(tr(T.submit));
+}
+function setLang(l){ lang=l; applyLang(); }
+function toggleMenu(){
+  const m=document.getElementById("menu");
+  if(!m.dataset.built) renderMenu();
+  m.classList.toggle("open");
+  document.getElementById("menuToggle").textContent=m.classList.contains("open")?tr(T.menu_hide):tr(T.menu_show);
+  if(m.classList.contains("open")) m.scrollIntoView({behavior:"smooth"});
+}
+
+const dateEl=document.getElementById("date");
+const today=new Date(); today.setHours(0,0,0,0);
+const maxd=new Date(today); maxd.setDate(maxd.getDate()+120);
+dateEl.min=iso(today); dateEl.max=iso(maxd);
+dateEl.onchange=()=>{ state.date=dateEl.value; showDateHint(); renderSlots(); validate(); };
 
 function stepGuests(n){
-  const g = document.getElementById("guests");
-  let v = (parseInt(g.value)||1)+n; v=Math.max(1,Math.min(20,v)); g.value=v; validate();
+  const g=document.getElementById("guests");
+  const mx=state.chalet?CH[state.chalet].maxg:20;
+  let v=(parseInt(g.value)||1)+n; v=Math.max(1,Math.min(mx,v)); g.value=v; validate();
 }
 ["guests","name","phone"].forEach(id=>document.getElementById(id).addEventListener("input",validate));
 
-function digits(s){ return (s.match(/\d/g)||[]).length; }
 function validate(){
   const ok = state.chalet && state.date && state.slot &&
     (parseInt(document.getElementById("guests").value)>0) &&
     document.getElementById("name").value.trim().length>=2 &&
     digits(document.getElementById("phone").value)>=7;
-  document.getElementById("btn").disabled = !ok;
-  if(tg && tg.MainButton){
-    if(ok){ tg.MainButton.setText("Отправить заявку"); tg.MainButton.show(); }
-    else { tg.MainButton.hide(); }
-  }
+  document.getElementById("btn").disabled=!ok;
+  if(tg&&tg.MainButton){ if(ok){ tg.MainButton.setText(tr(T.submit)); tg.MainButton.show(); } else tg.MainButton.hide(); }
   return ok;
 }
-if(tg && tg.MainButton){ tg.MainButton.onClick(submitForm);
-  try{ tg.MainButton.setParams({color:"#d8b878", text_color:"#1a1407"}); }catch(e){} }
+if(tg&&tg.MainButton){ tg.MainButton.onClick(submitForm); try{ tg.MainButton.setParams({color:"#d8b878",text_color:"#1a1407"}); }catch(e){} }
 
 function submitForm(){
   if(!validate()) return;
-  const payload = {
-    src:"webapp", chalet: state.chalet, date: state.date, slot: String(state.slot),
-    guests: String(parseInt(document.getElementById("guests").value)||""),
-    name: document.getElementById("name").value.trim(),
-    phone: document.getElementById("phone").value.trim(),
-    comment: document.getElementById("comment").value.trim(),
-  };
-  if(tg && tg.sendData){ tg.sendData(JSON.stringify(payload)); }
-  else { alert("Откройте это приложение из Telegram-бота, чтобы отправить заявку."); }
+  const payload={ src:"webapp", chalet:state.chalet, date:state.date, slot:String(state.slot),
+    guests:String(parseInt(document.getElementById("guests").value)||""),
+    name:document.getElementById("name").value.trim(),
+    phone:document.getElementById("phone").value.trim(),
+    comment:document.getElementById("comment").value.trim() };
+  if(tg&&tg.sendData){ tg.sendData(JSON.stringify(payload)); }
+  else { alert(tr(T.not_tg)); }
 }
+
+// стартовый язык — из Telegram
+try{ const lc=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.language_code||"").toLowerCase();
+  if(lc.startsWith("uz")) lang="uz"; else if(lc.startsWith("en")) lang="en"; }catch(e){}
+applyLang();
 </script>
 </body>
 </html>

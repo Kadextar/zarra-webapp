@@ -181,12 +181,12 @@ const T = {
 
 const CH = {
   comfort:{name:{ru:"Шале «Комфорт»",uz:"«Komfort» shale",en:"“Comfort” chalet"},
-    cap:{ru:"ночёвка до 2 · до 10 гостей днём",uz:"tunash 2 gacha · kunduzi 10 mehmon",en:"overnight up to 2 · up to 10 daytime"},
-    img:"img/comfort.jpg", maxg:10,
+    cap:{ru:"ночёвка до 2 · до 8 гостей днём",uz:"tunash 2 gacha · kunduzi 8 mehmon",en:"overnight up to 2 · up to 8 daytime"},
+    img:"img/comfort.jpg", maxg:8,
     wd:{1:"1,5 млн",2:"2 млн",3:"3 млн"}, we:{1:"1,8 млн",2:"2,4 млн",3:"3,6 млн"}},
   lux:{name:{ru:"«Президент Люкс»",uz:"«Prezident Lyuks»",en:"“President Lux”"},
-    cap:{ru:"ночёвка до 7 · до 20 гостей",uz:"tunash 7 gacha · 20 mehmongacha",en:"overnight up to 7 · up to 20 guests"},
-    img:"img/lux.jpg", maxg:20,
+    cap:{ru:"ночёвка до 7 · до 15 гостей",uz:"tunash 7 gacha · 15 mehmongacha",en:"overnight up to 7 · up to 15 guests"},
+    img:"img/lux.jpg", maxg:15,
     wd:{1:"3 млн",2:"4 млн",3:"6 млн"}, we:{1:"3,6 млн",2:"4,8 млн",3:"7,2 млн"}},
 };
 const SLOT={
@@ -291,7 +291,7 @@ dateEl.onchange=()=>{ state.date=dateEl.value; showDateHint(); renderSlots(); va
 
 function stepGuests(n){
   const g=document.getElementById("guests");
-  const mx=state.chalet?CH[state.chalet].maxg:20;
+  const mx=state.chalet?CH[state.chalet].maxg:15;
   let v=(parseInt(g.value)||1)+n; v=Math.max(1,Math.min(mx,v)); g.value=v; validate();
 }
 ["guests","name","phone"].forEach(id=>document.getElementById(id).addEventListener("input",validate));

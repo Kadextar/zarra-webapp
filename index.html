@@ -2,151 +2,429 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ZARRA — Бронирование</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0a0b08; --gold:#d8b878; --gold2:#e8c87f; --cream:#f1ead9;
-    --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.10);
-    --border:rgba(255,255,255,.12); --border-g:rgba(216,184,120,.55);
-    --muted:rgba(241,234,217,.55);
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;}
-  body{
-    background:
-      radial-gradient(120% 70% at 50% 0%, rgba(216,184,120,.16), transparent 60%),
-      radial-gradient(90% 60% at 100% 30%, rgba(120,140,90,.10), transparent 55%),
-      var(--bg);
-    background-attachment:fixed; color:var(--cream);
-    font-family:"Jost",-apple-system,BlinkMacSystemFont,sans-serif; font-weight:300; letter-spacing:.2px;
-    padding:0 0 44px; min-height:100vh;
-  }
-  .wrap{padding:0 16px;}
-  .fadein{animation:fu .6s ease both;}
-  @keyframes fu{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;}}
-  /* Hero */
-  .hero{position:relative; height:210px; overflow:hidden; border-radius:0 0 26px 26px; margin-bottom:6px;}
-  .hero img{width:100%; height:100%; object-fit:cover; display:block;}
-  .hero::after{content:""; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(10,11,8,.35) 0%, rgba(10,11,8,.15) 40%, rgba(10,11,8,.95) 100%);}
-  .hero .cap{position:absolute; left:0; right:0; bottom:16px; text-align:center; z-index:2;}
-  .hero .cap b{font-family:"Cormorant Garamond",serif; font-size:34px; font-weight:700; letter-spacing:11px; text-indent:11px; color:#fff;}
-  .hero .cap span{display:block; font-size:9.5px; letter-spacing:5px; color:var(--gold2); text-transform:uppercase; margin-top:1px;}
-  .langs{position:absolute; top:12px; right:12px; z-index:3; display:flex; gap:6px;}
-  .langs button{background:rgba(10,11,8,.45); border:1px solid rgba(255,255,255,.18); color:var(--cream);
-    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-    border-radius:20px; padding:5px 10px; font-family:"Jost"; font-size:12px; cursor:pointer;}
-  .langs button.on{background:var(--gold); color:#1a1407; border-color:var(--gold);}
-  h1{font-family:"Cormorant Garamond",serif; font-weight:600; font-size:30px; text-align:center; margin:16px 0 4px;}
-  h1 .line{display:flex; align-items:center; justify-content:center; gap:12px; font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; font-family:"Jost";}
-  h1 .line::before,h1 .line::after{content:""; width:30px; height:1px; background:linear-gradient(90deg,transparent,var(--gold));}
-  h1 .line::after{background:linear-gradient(90deg,var(--gold),transparent);}
-  .step{font-size:11px; letter-spacing:2.5px; color:var(--gold); text-transform:uppercase; margin:26px 6px 12px; font-weight:500;}
-  .step b{opacity:.5; margin-right:7px; font-weight:400;}
-  .glass{background:var(--glass); -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
-    border:1px solid var(--border); border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);}
-  .cards{display:grid; gap:12px;}
-  .chalet{overflow:hidden; cursor:pointer; transition:.18s;}
-  .chalet:active{transform:scale(.99);}
-  .chalet img{width:100%; height:130px; object-fit:cover; display:block;}
-  .chalet .body{padding:12px 16px 14px;}
-  .chalet .t{font-family:"Cormorant Garamond",serif; font-size:22px; font-weight:600;}
-  .chalet .s{font-size:12.5px; color:var(--muted);}
-  .chalet.sel{border-color:var(--border-g); box-shadow:0 10px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(216,184,120,.4);}
-  .slot{padding:15px 17px; cursor:pointer; transition:.18s; display:flex; justify-content:space-between; align-items:center;}
-  .slot:active{transform:scale(.99);}
-  .slot.sel{border-color:var(--border-g); background:var(--glass2); box-shadow:0 10px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(216,184,120,.35);}
-  .slot .t{font-size:14px;}
-  .slot .p{font-family:"Cormorant Garamond",serif; font-size:22px; font-weight:700; color:var(--gold2); white-space:nowrap; font-variant-numeric:lining-nums;}
-  .field{padding:2px 6px;}
-  input,textarea{width:100%; background:transparent; border:none; color:var(--cream); font-family:"Jost"; font-weight:300; font-size:16px; outline:none; padding:14px;}
-  input::placeholder,textarea::placeholder{color:rgba(241,234,217,.35);}
-  input[type=date]{color-scheme:dark;}
-  textarea{resize:none; min-height:56px;}
-  label.lbl{font-size:12px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin:0 6px 7px; display:block;}
-  .hint{font-size:12px; color:var(--muted); margin:8px 8px 0; font-style:italic;}
-  .stepper{display:flex; align-items:center; overflow:hidden; max-width:190px;}
-  .stepper button{background:none; border:none; color:var(--gold); font-size:24px; width:54px; height:54px; cursor:pointer;}
-  .stepper input{text-align:center; font-weight:500; font-size:18px;}
-  .row12{height:12px;}
-  .submit{width:100%; margin-top:24px; border:none; border-radius:18px; padding:17px; font-family:"Jost"; font-size:16px; font-weight:600; letter-spacing:.5px; cursor:pointer;
-    color:#1a1407; background:linear-gradient(135deg,var(--gold2),var(--gold)); box-shadow:0 8px 30px rgba(216,184,120,.28);}
-  .submit:disabled{opacity:.35; box-shadow:none;}
-  .note{padding:15px 17px; font-size:12.5px; color:var(--muted); margin-top:22px; line-height:1.6;}
-  .note b{color:var(--gold2); font-weight:400;}
-  /* Menu */
-  .menu-toggle{width:100%; margin-top:30px; background:var(--glass); border:1px solid var(--border);
-    -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px); border-radius:18px; color:var(--cream);
-    font-family:"Jost"; font-size:15px; padding:16px; cursor:pointer;}
-  #menu{display:none; margin-top:14px;}
-  #menu.open{display:block;}
-  .mcat{padding:14px 17px; margin-bottom:11px;}
-  .mcat h3{font-family:"Cormorant Garamond",serif; color:var(--gold2); font-size:20px; font-weight:600; margin:0 0 8px;}
-  .mrow{display:flex; justify-content:space-between; gap:12px; padding:5px 0; font-size:14px; border-bottom:1px dashed rgba(255,255,255,.07);}
-  .mrow:last-child{border-bottom:none;}
-  .mrow .pr{color:var(--gold2); white-space:nowrap; font-variant-numeric:lining-nums;}
-  .mnote{text-align:center; font-size:12px; color:var(--muted); margin:2px 0 6px; font-style:italic;}
+/* ==========================================================================
+   ZARRA — мини-приложение бронирования
+   Дизайн: liquid glass / glassmorphism. Тёмная база + золото бренда.
+   Адаптив: телефон (1 колонка) → планшет (2) → компьютер (2 колонки + сводка).
+   ========================================================================== */
+:root{
+  /* Палитра бренда */
+  --bg:#08090a;
+  --bg2:#0d0f0d;
+  --gold:#d8b878;
+  --gold2:#efd6a0;
+  --gold-dim:rgba(216,184,120,.5);
+  --cream:#f3ede1;
+  --muted:rgba(243,237,225,.56);
+  --muted2:rgba(243,237,225,.38);
+
+  /* Стеклянная система */
+  --glass-bg:linear-gradient(150deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.045) 42%, rgba(255,255,255,.028) 100%);
+  --glass-bg-strong:linear-gradient(150deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.07) 45%, rgba(255,255,255,.04) 100%);
+  --glass-blur:blur(26px) saturate(175%);
+  --glass-border:rgba(255,255,255,.13);
+  --glass-border-hi:rgba(255,255,255,.26);
+  --ring-gold:rgba(216,184,120,.62);
+
+  --shadow-soft:0 10px 34px rgba(0,0,0,.42);
+  --shadow-lift:0 20px 56px rgba(0,0,0,.55);
+  --shadow-gold:0 12px 40px rgba(216,184,120,.24);
+
+  --r-lg:24px; --r-md:18px; --r-sm:13px;
+  --ease:cubic-bezier(.22,.9,.28,1);          /* мягкая «пружина» */
+  --dur:.42s;
+
+  --pad:16px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+html,body{margin:0; padding:0;}
+body{
+  min-height:100vh; min-height:100dvh;
+  background:var(--bg);
+  color:var(--cream);
+  font-family:"Jost",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-weight:300; letter-spacing:.2px; line-height:1.5;
+  overflow-x:hidden;
+  padding-bottom:calc(48px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+}
+
+/* --- Живой фон: медленно плывущие пятна света -------------------------- */
+.ambient{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;}
+.ambient::after{ /* лёгкая зернистость, чтобы стекло не выглядело «пластиком» */
+  content:""; position:absolute; inset:0; opacity:.035; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+.blob{position:absolute; border-radius:50%; filter:blur(70px); will-change:transform;}
+.b1{width:60vw; height:60vw; max-width:520px; max-height:520px; top:-14%; left:-16%;
+    background:radial-gradient(circle, rgba(216,184,120,.34), transparent 68%);
+    animation:drift1 26s var(--ease) infinite alternate;}
+.b2{width:56vw; height:56vw; max-width:480px; max-height:480px; top:24%; right:-22%;
+    background:radial-gradient(circle, rgba(122,150,96,.26), transparent 68%);
+    animation:drift2 32s var(--ease) infinite alternate;}
+.b3{width:70vw; height:70vw; max-width:600px; max-height:600px; bottom:-18%; left:8%;
+    background:radial-gradient(circle, rgba(190,140,80,.20), transparent 70%);
+    animation:drift3 38s var(--ease) infinite alternate;}
+@keyframes drift1{to{transform:translate3d(14vw,10vh,0) scale(1.18);}}
+@keyframes drift2{to{transform:translate3d(-16vw,-8vh,0) scale(1.12);}}
+@keyframes drift3{to{transform:translate3d(10vw,-12vh,0) scale(.88);}}
+
+.page{position:relative; z-index:1;}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 var(--pad);}
+
+/* --- Стеклянная поверхность (основа всего дизайна) --------------------- */
+.glass{
+  position:relative;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-soft),
+             inset 0 1px 0 rgba(255,255,255,.20),   /* блик по верхней грани */
+             inset 0 -1px 0 rgba(0,0,0,.28);         /* тень по нижней */
+  isolation:isolate;
+}
+/* Преломление: диагональный световой градиент поверх стекла */
+.glass::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:2;
+  background:linear-gradient(140deg, rgba(255,255,255,.17) 0%, rgba(255,255,255,.03) 30%,
+             transparent 52%, rgba(255,255,255,.05) 100%);
+}
+/* Скользящий блик — включается при наведении/выборе */
+.glass::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:3;
+  background:linear-gradient(105deg, transparent 30%, rgba(255,255,255,.15) 47%, transparent 62%);
+  transform:translateX(-120%); opacity:0; transition:none;
+}
+.glass.sheen::after{animation:sheen 1.15s var(--ease);}
+@keyframes sheen{
+  0%{transform:translateX(-120%); opacity:0;}
+  22%{opacity:1;}
+  100%{transform:translateX(120%); opacity:0;}
+}
+
+/* --- Шапка -------------------------------------------------------------- */
+.hero{position:relative; height:min(46vh,300px); min-height:210px; overflow:hidden;
+      border-radius:0 0 30px 30px; isolation:isolate;}
+.hero img{width:100%; height:100%; object-fit:cover; display:block;
+          transform:scale(1.06); animation:heroIn 1.6s var(--ease) both;}
+@keyframes heroIn{from{transform:scale(1.16); opacity:.4;} to{transform:scale(1.06); opacity:1;}}
+.hero::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(8,9,10,.44) 0%, rgba(8,9,10,.10) 38%, rgba(8,9,10,.92) 100%);}
+.hero .cap{position:absolute; left:0; right:0; bottom:clamp(18px,4vh,34px); text-align:center; z-index:2;
+  animation:fadeUp .9s .25s var(--ease) both;}
+.hero .cap b{display:block; font-family:"Cormorant Garamond",serif; font-weight:700;
+  font-size:clamp(32px,8vw,52px); letter-spacing:.30em; text-indent:.30em; color:#fff;
+  text-shadow:0 4px 30px rgba(0,0,0,.6);}
+.hero .cap span{display:block; font-size:clamp(9px,2.2vw,11px); letter-spacing:.42em; text-indent:.42em;
+  color:var(--gold2); text-transform:uppercase; margin-top:4px;}
+.hero .glow{position:absolute; left:50%; bottom:-40%; width:80%; height:70%; transform:translateX(-50%);
+  background:radial-gradient(ellipse at center, rgba(216,184,120,.28), transparent 62%); z-index:1;}
+
+/* Переключатель языка */
+.langs{position:absolute; top:calc(12px + env(safe-area-inset-top)); right:12px; z-index:4;
+  display:flex; gap:4px; padding:4px; border-radius:999px;
+  background:rgba(8,9,10,.42); border:1px solid rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(16px) saturate(160%); backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:0 6px 22px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
+.langs button{background:none; border:none; color:var(--cream); border-radius:999px;
+  padding:6px 12px; font-family:"Jost"; font-size:12px; font-weight:400; cursor:pointer;
+  transition:color .28s var(--ease), background .28s var(--ease);}
+.langs button.on{background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a1407; font-weight:500;
+  box-shadow:0 3px 14px rgba(216,184,120,.4);}
+
+/* --- Заголовок ---------------------------------------------------------- */
+.title{text-align:center; margin:clamp(20px,4vw,34px) 0 6px;}
+.title h1{font-family:"Cormorant Garamond",serif; font-weight:600;
+  font-size:clamp(28px,6vw,42px); margin:0; letter-spacing:.01em;}
+.title .line{display:flex; align-items:center; justify-content:center; gap:12px; margin-top:8px;
+  font-size:clamp(10px,2.4vw,12px); letter-spacing:.2em; color:var(--muted); text-transform:uppercase;}
+.title .line::before,.title .line::after{content:""; width:clamp(24px,8vw,54px); height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim));}
+.title .line::after{background:linear-gradient(90deg,var(--gold-dim),transparent);}
+
+/* --- Индикатор шагов ---------------------------------------------------- */
+.progress{display:flex; align-items:center; gap:6px; justify-content:center;
+  margin:22px auto 4px; max-width:420px;}
+.pdot{flex:1; height:3px; border-radius:2px; background:rgba(255,255,255,.11); overflow:hidden; position:relative;}
+.pdot::after{content:""; position:absolute; inset:0; border-radius:inherit;
+  background:linear-gradient(90deg,var(--gold),var(--gold2));
+  transform:scaleX(0); transform-origin:left; transition:transform .55s var(--ease);}
+.pdot.on::after{transform:scaleX(1);}
+
+/* --- Заголовок шага ----------------------------------------------------- */
+.step{display:flex; align-items:center; gap:10px;
+  margin:clamp(26px,5vw,40px) 4px clamp(12px,2vw,16px);}
+.step .num{flex:none; width:26px; height:26px; border-radius:50%; display:grid; place-items:center;
+  font-size:11px; font-weight:500; color:var(--gold2);
+  background:rgba(216,184,120,.10); border:1px solid rgba(216,184,120,.30);
+  transition:all .4s var(--ease);}
+.step.done .num{background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a1407;
+  border-color:transparent; box-shadow:0 4px 16px rgba(216,184,120,.36);}
+.step .lbl{font-size:clamp(11px,2.6vw,12.5px); letter-spacing:.18em; color:var(--gold);
+  text-transform:uppercase; font-weight:500;}
+
+/* --- Карточки размещения ------------------------------------------------ */
+.cards{display:grid; gap:13px;}
+.chalet{overflow:hidden; cursor:pointer; padding:0;
+  transition:transform var(--dur) var(--ease), border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);}
+.chalet .ph{position:relative; height:clamp(140px,26vw,190px); overflow:hidden;}
+.chalet img{width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .8s var(--ease); transform:scale(1.02);}
+.chalet .ph::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 30%, rgba(8,9,10,.86) 100%);}
+.chalet .body{position:relative; z-index:4; padding:13px 17px 16px; margin-top:-46px;}
+.chalet .t{font-family:"Cormorant Garamond",serif; font-size:clamp(20px,4.4vw,25px); font-weight:600; line-height:1.15;}
+.chalet .s{font-size:clamp(12px,2.9vw,13px); color:var(--muted); margin-top:3px;}
+.chalet .from{display:inline-flex; align-items:baseline; gap:5px; margin-top:9px;
+  font-size:12px; color:var(--muted2);}
+.chalet .from b{font-family:"Cormorant Garamond",serif; font-size:17px; font-weight:600; color:var(--gold2);
+  font-variant-numeric:lining-nums;}
+.chalet .tick{position:absolute; top:12px; right:12px; z-index:5; width:28px; height:28px; border-radius:50%;
+  display:grid; place-items:center; font-size:14px; color:#1a1407;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  box-shadow:0 6px 20px rgba(216,184,120,.45);
+  transform:scale(0) rotate(-45deg); opacity:0; transition:all .45s var(--ease);}
+.chalet.sel{border-color:var(--ring-gold); box-shadow:var(--shadow-lift), 0 0 0 1px var(--ring-gold), 0 0 42px rgba(216,184,120,.18);}
+.chalet.sel .tick{transform:scale(1) rotate(0); opacity:1;}
+.chalet.sel img{transform:scale(1.09);}
+.chalet:active{transform:scale(.985);}
+
+/* --- Слоты (тарифы) ----------------------------------------------------- */
+.slot{padding:15px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px;
+  transition:transform var(--dur) var(--ease), border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur) var(--ease);}
+.slot .t{font-size:clamp(13px,3.2vw,14.5px); position:relative; z-index:4;}
+.slot .p{font-family:"Cormorant Garamond",serif; font-size:clamp(19px,4.6vw,24px); font-weight:700;
+  color:var(--gold2); white-space:nowrap; font-variant-numeric:lining-nums; position:relative; z-index:4;
+  transition:transform .3s var(--ease);}
+.slot .p.bump{animation:bump .5s var(--ease);}
+@keyframes bump{0%{transform:scale(1);}38%{transform:scale(1.13);}100%{transform:scale(1);}}
+.slot.sel{background:var(--glass-bg-strong); border-color:var(--ring-gold);
+  box-shadow:var(--shadow-lift), 0 0 0 1px var(--ring-gold), 0 0 38px rgba(216,184,120,.16);}
+.slot:active{transform:scale(.985);}
+
+/* --- Поля ввода --------------------------------------------------------- */
+.lbl{display:block; font-size:11.5px; letter-spacing:.16em; color:var(--muted);
+  text-transform:uppercase; margin:0 6px 8px;}
+.field{padding:2px 6px; transition:border-color .32s var(--ease), box-shadow .32s var(--ease);}
+.field:focus-within{border-color:var(--ring-gold); box-shadow:var(--shadow-soft), 0 0 0 1px var(--ring-gold), 0 0 30px rgba(216,184,120,.14);}
+input,textarea{width:100%; background:transparent; border:none; color:var(--cream);
+  font-family:"Jost"; font-weight:300; font-size:16px; outline:none; padding:15px; position:relative; z-index:4;}
+input::placeholder,textarea::placeholder{color:var(--muted2);}
+input[type=date]{color-scheme:dark; cursor:pointer;}
+textarea{resize:none; min-height:62px; line-height:1.55;}
+.hint{font-size:12.2px; color:var(--muted); margin:9px 8px 0; line-height:1.5;}
+.hint.we{color:var(--gold2);}
+
+/* Счётчик гостей */
+.stepper{display:flex; align-items:center; overflow:hidden; max-width:210px;}
+.stepper button{background:none; border:none; color:var(--gold); font-size:22px; font-weight:300;
+  width:56px; height:58px; cursor:pointer; position:relative; z-index:4;
+  transition:background .28s var(--ease), color .28s var(--ease);}
+.stepper button:active{background:rgba(216,184,120,.14);}
+.stepper input{text-align:center; font-weight:500; font-size:19px; padding:15px 0;
+  -moz-appearance:textfield;}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+
+/* --- Сводка заказа ------------------------------------------------------ */
+.summary{padding:18px 19px; margin-top:26px;}
+.summary h3{margin:0 0 14px; font-family:"Cormorant Garamond",serif; font-size:22px; font-weight:600;
+  color:var(--gold2); position:relative; z-index:4;}
+.srow{display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+  padding:8px 0; font-size:13.5px; border-bottom:1px solid rgba(255,255,255,.07); position:relative; z-index:4;}
+.srows .srow:last-child{border-bottom:none;}
+.srow .k{color:var(--muted); flex:none;}
+.srow .v{text-align:right;}
+.stotal{display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  margin-top:13px; padding-top:14px; border-top:1px solid rgba(216,184,120,.26); position:relative; z-index:4;}
+.stotal .k{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+.stotal .v{font-family:"Cormorant Garamond",serif; font-size:29px; font-weight:700; color:var(--gold2);
+  font-variant-numeric:lining-nums; line-height:1;}
+.sprepay{margin-top:7px; font-size:12.5px; color:var(--muted); text-align:right; position:relative; z-index:4;}
+.sprepay b{color:var(--cream); font-weight:400;}
+.sempty{font-size:13px; color:var(--muted2); font-style:italic; position:relative; z-index:4;}
+
+/* --- Кнопка отправки ---------------------------------------------------- */
+.submit{width:100%; margin-top:20px; border:none; border-radius:var(--r-md); padding:18px;
+  font-family:"Jost"; font-size:16px; font-weight:600; letter-spacing:.03em; cursor:pointer; color:#1a1407;
+  background:linear-gradient(135deg,var(--gold2) 0%,var(--gold) 55%,#c9a765 100%);
+  box-shadow:var(--shadow-gold), inset 0 1px 0 rgba(255,255,255,.5);
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease), opacity .3s var(--ease);
+  position:relative; overflow:hidden;}
+.submit:not(:disabled):hover{transform:translateY(-2px); box-shadow:0 18px 50px rgba(216,184,120,.34), inset 0 1px 0 rgba(255,255,255,.5);}
+.submit:not(:disabled):active{transform:translateY(0) scale(.99);}
+.submit:disabled{opacity:.32; box-shadow:none; cursor:default;}
+
+/* --- Примечание --------------------------------------------------------- */
+.note{padding:16px 18px; font-size:12.8px; color:var(--muted); margin-top:20px; line-height:1.65;}
+.note span{position:relative; z-index:4; display:block;}
+
+/* --- Меню ресторана ----------------------------------------------------- */
+.menu-toggle{width:100%; margin-top:30px; border-radius:var(--r-md); color:var(--cream);
+  font-family:"Jost"; font-size:15px; padding:17px; cursor:pointer; background:var(--glass-bg);
+  -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.16);
+  transition:transform .3s var(--ease), border-color .3s var(--ease);}
+.menu-toggle:hover{border-color:var(--glass-border-hi); transform:translateY(-1px);}
+.menu-toggle:active{transform:scale(.99);}
+#menu{display:none; margin-top:14px;}
+#menu.open{display:block; animation:fadeUp .5s var(--ease) both;}
+.mnote{text-align:center; font-size:12px; color:var(--muted2); margin:4px 0 12px;}
+.mgrid{display:grid; gap:12px;}
+.mcat{padding:15px 18px;}
+.mcat h3{font-family:"Cormorant Garamond",serif; color:var(--gold2); font-size:20px; font-weight:600;
+  margin:0 0 9px; position:relative; z-index:4;}
+.mrow{display:flex; justify-content:space-between; gap:14px; padding:6px 0; font-size:13.6px;
+  border-bottom:1px dashed rgba(255,255,255,.08); position:relative; z-index:4;}
+.mrow:last-child{border-bottom:none;}
+.mrow .pr{color:var(--gold2); white-space:nowrap; font-variant-numeric:lining-nums;}
+
+/* --- Появление при прокрутке -------------------------------------------- */
+.reveal{opacity:0; transform:translateY(20px);}
+.reveal.in{opacity:1; transform:none; transition:opacity .7s var(--ease), transform .7s var(--ease);}
+@keyframes fadeUp{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:none;}}
+
+/* ==========================================================================
+   АДАПТИВ
+   ========================================================================== */
+/* Планшет: карточки в 2 колонки */
+@media (min-width:640px){
+  :root{--pad:26px;}
+  .cards.chalets{grid-template-columns:repeat(2,1fr);}
+  .slots-grid{grid-template-columns:repeat(2,1fr);}
+  .mgrid{grid-template-columns:repeat(2,1fr);}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px 18px;}
+  .form-grid .full{grid-column:1/-1;}
+}
+/* Компьютер: две колонки, сводка «прилипает» сбоку */
+@media (min-width:1000px){
+  :root{--pad:34px;}
+  body{padding-bottom:60px;}
+  .hero{height:min(52vh,380px); border-radius:0 0 40px 40px;}
+  .layout{display:grid; grid-template-columns:minmax(0,1fr) 350px; gap:40px; align-items:start;}
+  .aside{position:sticky; top:26px;}
+  .summary{margin-top:0;}
+  .cards.chalets{grid-template-columns:repeat(3,1fr);}
+  .slots-grid{grid-template-columns:1fr;}
+  .mgrid{grid-template-columns:repeat(3,1fr);}
+  .chalet{cursor:pointer;}
+  .chalet:hover{transform:translateY(-5px); border-color:var(--glass-border-hi); box-shadow:var(--shadow-lift);}
+  .chalet:hover img{transform:scale(1.09);}
+  .slot:hover{border-color:var(--glass-border-hi); transform:translateY(-2px);}
+  .progress{margin:26px auto 6px;}
+}
+@media (min-width:1400px){ :root{--maxw:1280px;} }
+
+/* Бережный режим: выключаем анимации, если человек их отключил в системе */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;}
+  .reveal{opacity:1; transform:none;}
+}
+/* Если стекло не поддерживается — просто плотный фон, всё читаемо */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .glass,.menu-toggle,.langs{background:rgba(24,26,24,.92);}
+}
 </style>
 </head>
 <body>
-  <div class="hero fadein">
+
+<div class="ambient" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+</div>
+
+<div class="page">
+  <header class="hero">
     <img src="img/hero.jpg" alt="">
+    <div class="glow"></div>
     <div class="langs">
       <button data-l="ru" onclick="setLang('ru')">RU</button>
       <button data-l="uz" onclick="setLang('uz')">UZ</button>
       <button data-l="en" onclick="setLang('en')">EN</button>
     </div>
     <div class="cap"><b>ZARRA</b><span>Hotel &amp; Resort</span></div>
-  </div>
+  </header>
 
   <div class="wrap">
-    <h1><span id="t_title">Бронирование</span>
+    <div class="title">
+      <h1 id="t_title">Бронирование</h1>
       <div class="line" id="t_sub">заявку передадим сотруднику</div>
-    </h1>
-
-    <div class="step"><b>01</b><span id="t_s_chalet">Выберите шале</span></div>
-    <div class="cards" id="chalets"></div>
-
-    <div class="step"><b>02</b><span id="t_s_date">Дата заезда</span></div>
-    <div class="glass field"><input type="date" id="date"></div>
-    <div class="hint" id="dateHint"></div>
-
-    <div class="step"><b>03</b><span id="t_s_slot">Тариф (слот)</span></div>
-    <div class="cards" id="slots"></div>
-
-    <div class="step"><b>04</b><span id="t_s_contacts">Гости и контакты</span></div>
-    <label class="lbl" id="t_lbl_guests">Сколько гостей всего</label>
-    <div class="glass stepper">
-      <button type="button" onclick="stepGuests(-1)">−</button>
-      <input type="number" id="guests" value="2" min="1" max="20" inputmode="numeric">
-      <button type="button" onclick="stepGuests(1)">+</button>
     </div>
-    <div class="row12"></div>
-    <label class="lbl" id="t_lbl_name">Имя</label>
-    <div class="glass field"><input type="text" id="name"></div>
-    <div class="row12"></div>
-    <label class="lbl" id="t_lbl_phone">Телефон</label>
-    <div class="glass field"><input type="tel" id="phone" placeholder="+998 __ ___ __ __"></div>
-    <div class="row12"></div>
-    <label class="lbl" id="t_lbl_comment">Пожелания</label>
-    <div class="glass field"><textarea id="comment"></textarea></div>
 
-    <button class="submit" id="btn" disabled onclick="submitForm()">Отправить заявку</button>
+    <div class="progress" id="progress">
+      <div class="pdot" data-s="1"></div><div class="pdot" data-s="2"></div>
+      <div class="pdot" data-s="3"></div><div class="pdot" data-s="4"></div>
+    </div>
 
-    <div class="note glass" id="t_note"></div>
+    <div class="layout">
+      <main>
+        <div class="step reveal" id="st1"><div class="num">1</div><div class="lbl" id="t_s_chalet">Выберите шале</div></div>
+        <div class="cards chalets" id="chalets"></div>
+
+        <div class="step reveal" id="st2"><div class="num">2</div><div class="lbl" id="t_s_date">Дата заезда</div></div>
+        <div class="glass field reveal"><input type="date" id="date"></div>
+        <div class="hint" id="dateHint"></div>
+
+        <div class="step reveal" id="st3"><div class="num">3</div><div class="lbl" id="t_s_slot">Тариф (слот)</div></div>
+        <div class="cards slots-grid" id="slots"></div>
+
+        <div class="step reveal" id="st4"><div class="num">4</div><div class="lbl" id="t_s_contacts">Гости и контакты</div></div>
+        <div class="form-grid">
+          <div class="reveal">
+            <label class="lbl" id="t_lbl_guests">Сколько гостей всего</label>
+            <div class="glass stepper">
+              <button type="button" onclick="stepGuests(-1)" aria-label="−">−</button>
+              <input type="number" id="guests" value="2" min="1" max="20" inputmode="numeric">
+              <button type="button" onclick="stepGuests(1)" aria-label="+">+</button>
+            </div>
+          </div>
+          <div class="reveal">
+            <label class="lbl" id="t_lbl_name">Имя</label>
+            <div class="glass field"><input type="text" id="name" autocomplete="name"></div>
+          </div>
+          <div class="reveal">
+            <label class="lbl" id="t_lbl_phone">Телефон</label>
+            <div class="glass field"><input type="tel" id="phone" autocomplete="tel" placeholder="+998 __ ___ __ __"></div>
+          </div>
+          <div class="reveal full">
+            <label class="lbl" id="t_lbl_comment">Пожелания</label>
+            <div class="glass field"><textarea id="comment"></textarea></div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="aside">
+        <div class="glass summary reveal" id="summary"></div>
+        <button class="submit" id="btn" disabled onclick="submitForm()">Отправить заявку</button>
+        <div class="glass note" id="noteBox"><span id="t_note"></span></div>
+      </aside>
+    </div>
 
     <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">🍽 Меню ресторана</button>
-    <div id="menu"><div class="mnote" id="t_mnote">Цены в сумах</div></div>
+    <div id="menu"></div>
   </div>
+</div>
 
 <script>
 const tg = window.Telegram ? window.Telegram.WebApp : null;
-if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor("#0a0b08"); tg.setBackgroundColor("#0a0b08"); }catch(e){} }
+if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor("#08090a"); tg.setBackgroundColor("#08090a"); }catch(e){} }
+
+/* Лёгкая вибрация при выборе — приятная мелочь на телефоне */
+function haptic(kind){
+  try{ if(tg&&tg.HapticFeedback){ kind==="sel" ? tg.HapticFeedback.selectionChanged()
+        : tg.HapticFeedback.impactOccurred("light"); } }catch(e){}
+}
 
 const HOLIDAYS = ["2026-01-01","2026-01-14","2026-03-08","2026-03-20","2026-03-21",
   "2026-05-09","2026-05-27","2026-09-01","2026-10-01","2026-12-08"];
@@ -176,10 +454,23 @@ const T = {
   pick_first:{ru:"Сначала выберите шале",uz:"Avval shaleni tanlang",en:"Choose a chalet first"},
   menu_show:{ru:"🍽 Меню ресторана",uz:"🍽 Restoran menyusi",en:"🍽 Restaurant menu"},
   menu_hide:{ru:"🍽 Скрыть меню",uz:"🍽 Menyuni yashirish",en:"🍽 Hide menu"},
-  mnote:{ru:"Цены в сумах",uz:"Narxlar so‘mda",en:"Prices in UZS"},
+  mnote:{ru:"Цены в сумах · Safo Restaurant, ежедневно 11:00–23:00",
+         uz:"Narxlar so‘mda · Safo Restaurant, har kuni 11:00–23:00",
+         en:"Prices in UZS · Safo Restaurant, daily 11:00–23:00"},
   not_tg:{ru:"Откройте приложение из Telegram-бота, чтобы отправить заявку.",
           uz:"Arizani yuborish uchun ilovani Telegram-botdan oching.",
           en:"Open this app from the Telegram bot to send a request."},
+  from:{ru:"от",uz:"dan",en:"from"},
+  sum_title:{ru:"Ваш выбор",uz:"Sizning tanlovingiz",en:"Your selection"},
+  sum_empty:{ru:"Выберите шале, дату и тариф — здесь появится стоимость.",
+             uz:"Shale, sana va tarifni tanlang — narx shu yerda chiqadi.",
+             en:"Pick a chalet, date and rate — the price will appear here."},
+  sum_total:{ru:"Итого",uz:"Jami",en:"Total"},
+  sum_prepay:{ru:"Предоплата 50% — <b>{v}</b>",uz:"50% oldindan to‘lov — <b>{v}</b>",en:"50% prepayment — <b>{v}</b>"},
+  f_chalet:{ru:"Размещение",uz:"Joylashuv",en:"Stay"},
+  f_date:{ru:"Дата",uz:"Sana",en:"Date"},
+  f_slot:{ru:"Тариф",uz:"Tarif",en:"Rate"},
+  f_guests:{ru:"Гостей",uz:"Mehmonlar",en:"Guests"},
 };
 
 // Цены выходного дня (we) — ЯВНЫЕ суммы, а не «будни + процент».
@@ -206,6 +497,14 @@ function tapchanPrice(g){
   return TAP.base + Math.max(0,n-TAP.included)*TAP.extra;
 }
 function fmtSum(n){ return n.toLocaleString("ru-RU").replace(/,/g," ")+" сум"; }
+/* "2,5 млн" -> 2500000 (для подсчёта итога и предоплаты) */
+function priceToNum(s){
+  const t=String(s).toLowerCase().replace(/\s| /g,"");
+  const m=t.match(/([\d.,]+)/); if(!m) return null;
+  const num=parseFloat(m[1].replace(",","."));
+  if(isNaN(num)) return null;
+  return t.includes("млн")||t.includes("mln")||t.includes("m") ? Math.round(num*1e6) : Math.round(num);
+}
 const SLOT={
   1:{ru:"☀️ День · 10:00–17:00",uz:"☀️ Kunduzi · 10:00–17:00",en:"☀️ Day · 10:00–17:00"},
   2:{ru:"🌙 Ночь · 18:00–09:00",uz:"🌙 Tun · 18:00–09:00",en:"🌙 Night · 18:00–09:00"},
@@ -239,6 +538,18 @@ function tr(o){ return o[lang] || o.ru; }
 function iso(d){ const z=n=>String(n).padStart(2,"0"); return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
 function isWeekend(s){ if(!s) return false; const d=new Date(s+"T00:00:00"); const wd=d.getDay(); return wd===0||wd===6||HOLIDAYS.indexOf(s)>=0; }
 function digits(s){ return (s.match(/\d/g)||[]).length; }
+function guestsVal(){ return parseInt(document.getElementById("guests").value)||0; }
+
+/* Короткий блик по стеклу — отклик на выбор */
+function sheen(el){ el.classList.remove("sheen"); void el.offsetWidth; el.classList.add("sheen"); }
+
+/* Самая дешёвая цена размещения — для подписи «от …» на карточке */
+function fromPrice(key){
+  const p=CH[key];
+  if(p.perGuest) return fmtSum(TAP.base);
+  const nums=Object.values(p.wd).map(priceToNum).filter(n=>n);
+  return nums.length? fmtSum(Math.min(...nums)) : "";
+}
 
 function renderChalets(){
   const el=document.getElementById("chalets"); el.innerHTML="";
@@ -246,19 +557,34 @@ function renderChalets(){
     const p=CH[key];
     const d=document.createElement("div");
     d.className="glass chalet"+(state.chalet===key?" sel":"");
-    d.innerHTML=`<img src="${p.img}" alt=""><div class="body"><div class="t">${tr(p.name)}</div><div class="s">${tr(p.cap)}</div></div>`;
-    d.onclick=()=>{ state.chalet=key;
-      const g=document.getElementById("guests"); if(parseInt(g.value)>p.maxg) g.value=p.maxg; g.max=p.maxg;
+    d.innerHTML=`<div class="tick">✓</div>
+      <div class="ph"><img src="${p.img}" alt="" loading="lazy"></div>
+      <div class="body">
+        <div class="t">${tr(p.name)}</div>
+        <div class="s">${tr(p.cap)}</div>
+        <div class="from">${tr(T.from)} <b>${fromPrice(key)}</b></div>
+      </div>`;
+    d.onclick=()=>{
+      state.chalet=key;
+      const g=document.getElementById("guests");
+      if(parseInt(g.value)>p.maxg) g.value=p.maxg;
+      g.max=p.maxg;
       // У тапчана слот один — выбираем его сразу; иначе сбрасываем чужой слот.
       if(p.slots && p.slots.length===1) state.slot=p.slots[0];
       else if(state.slot && p.slots && p.slots.indexOf(state.slot)<0) state.slot=null;
-      renderChalets(); renderSlots(); validate(); };
+      haptic("sel"); sheen(d);
+      renderChalets(); renderSlots(); validate();
+    };
     el.appendChild(d);
   });
 }
+
 function renderSlots(){
   const el=document.getElementById("slots"); el.innerHTML="";
-  if(!state.chalet){ el.innerHTML=`<div class="hint">${tr(T.pick_first)}</div>`; return; }
+  if(!state.chalet){
+    el.innerHTML=`<div class="hint">${tr(T.pick_first)}</div>`;
+    return;
+  }
   const ch=CH[state.chalet];
   const price=isWeekend(state.date)?ch.we:ch.wd;
   (ch.slots||[1,2,3]).forEach(s=>{
@@ -267,11 +593,11 @@ function renderSlots(){
     // У тапчана цена зависит от числа гостей — показываем её сразу.
     let p=price[s];
     if(ch.perGuest){
-      const g=parseInt(document.getElementById("guests").value)||0;
+      const g=guestsVal();
       p = g>0 ? fmtSum(tapchanPrice(g)) : price[s];
     }
     d.innerHTML=`<div class="t">${tr(SLOT[s])}</div><div class="p">${p}</div>`;
-    d.onclick=()=>{ state.slot=s; renderSlots(); validate(); };
+    d.onclick=()=>{ state.slot=s; haptic("sel"); sheen(d); renderSlots(); validate(); };
     el.appendChild(d);
   });
   if(ch.perGuest){
@@ -280,20 +606,67 @@ function renderSlots(){
     el.appendChild(h);
   }
 }
+
+/* Итоговая цена выбранного варианта (или null, если выбор не полный) */
+function currentPrice(){
+  if(!state.chalet || !state.slot) return null;
+  const ch=CH[state.chalet];
+  if(ch.perGuest){ const g=guestsVal(); return g>0 ? tapchanPrice(g) : null; }
+  const table=isWeekend(state.date)?ch.we:ch.wd;
+  return priceToNum(table[state.slot]);
+}
+
+function renderSummary(){
+  const box=document.getElementById("summary");
+  const total=currentPrice();
+  if(!state.chalet || !state.slot || !state.date){
+    box.innerHTML=`<h3>${tr(T.sum_title)}</h3><div class="sempty">${tr(T.sum_empty)}</div>`;
+    return;
+  }
+  const d=new Date(state.date+"T00:00:00");
+  const dateStr=d.toLocaleDateString(lang==="ru"?"ru-RU":lang==="uz"?"uz-UZ":"en-GB",
+                 {day:"numeric",month:"long",weekday:"short"});
+  let html=`<h3>${tr(T.sum_title)}</h3><div class="srows">
+    <div class="srow"><span class="k">${tr(T.f_chalet)}</span><span class="v">${tr(CH[state.chalet].name)}</span></div>
+    <div class="srow"><span class="k">${tr(T.f_date)}</span><span class="v">${dateStr}</span></div>
+    <div class="srow"><span class="k">${tr(T.f_slot)}</span><span class="v">${tr(SLOT[state.slot])}</span></div>
+    <div class="srow"><span class="k">${tr(T.f_guests)}</span><span class="v">${guestsVal()||"—"}</span></div>
+    </div>`;
+  if(total){
+    html+=`<div class="stotal"><span class="k">${tr(T.sum_total)}</span><span class="v">${fmtSum(total)}</span></div>
+      <div class="sprepay">${tr(T.sum_prepay).replace("{v}",fmtSum(Math.round(total/2)))}</div>`;
+  }
+  box.innerHTML=html;
+}
+
 function renderMenu(){
   const el=document.getElementById("menu");
-  let html=`<div class="mnote">${tr(T.mnote)}</div>`;
+  let html=`<div class="mnote">${tr(T.mnote)}</div><div class="mgrid">`;
   MENU.forEach(cat=>{
     html+=`<div class="glass mcat"><h3>${tr(cat.c)}</h3>`;
     cat.it.forEach(r=>{ html+=`<div class="mrow"><span>${r[0]}</span><span class="pr">${r[1]}</span></div>`; });
     html+=`</div>`;
   });
-  el.innerHTML=html; el.dataset.built="1";
+  el.innerHTML=html+`</div>`; el.dataset.built="1";
 }
+
 function showDateHint(){
   const h=document.getElementById("dateHint");
-  h.textContent = state.date ? (isWeekend(state.date)?tr(T.hint_we):tr(T.hint_wd)) : "";
+  if(!state.date){ h.textContent=""; h.className="hint"; return; }
+  const we=isWeekend(state.date);
+  h.textContent = we?tr(T.hint_we):tr(T.hint_wd);
+  h.className = "hint"+(we?" we":"");
 }
+
+/* Подсветка пройденных шагов */
+function updateProgress(){
+  const done=[!!state.chalet, !!state.date, !!state.slot,
+    (guestsVal()>0 && document.getElementById("name").value.trim().length>=2
+     && digits(document.getElementById("phone").value)>=7)];
+  document.querySelectorAll(".pdot").forEach((el,i)=>el.classList.toggle("on",done[i]));
+  ["st1","st2","st3","st4"].forEach((id,i)=>document.getElementById(id).classList.toggle("done",done[i]));
+}
+
 function applyLang(){
   document.documentElement.lang=lang;
   document.getElementById("t_title").textContent=tr(T.title);
@@ -313,44 +686,54 @@ function applyLang(){
   const mOpen=document.getElementById("menu").classList.contains("open");
   document.getElementById("menuToggle").textContent=mOpen?tr(T.menu_hide):tr(T.menu_show);
   document.querySelectorAll(".langs button").forEach(b=>b.classList.toggle("on",b.dataset.l===lang));
-  renderChalets(); renderSlots(); showDateHint();
+  renderChalets(); renderSlots(); showDateHint(); renderSummary();
   if(document.getElementById("menu").dataset.built) renderMenu();
   if(tg&&tg.MainButton&&!document.getElementById("btn").disabled) tg.MainButton.setText(tr(T.submit));
 }
-function setLang(l){ lang=l; applyLang(); }
+function setLang(l){ lang=l; haptic("sel"); applyLang(); }
+
 function toggleMenu(){
   const m=document.getElementById("menu");
   if(!m.dataset.built) renderMenu();
   m.classList.toggle("open");
   document.getElementById("menuToggle").textContent=m.classList.contains("open")?tr(T.menu_hide):tr(T.menu_show);
-  if(m.classList.contains("open")) m.scrollIntoView({behavior:"smooth"});
+  haptic();
+  if(m.classList.contains("open")) setTimeout(()=>m.scrollIntoView({behavior:"smooth",block:"start"}),60);
 }
 
 const dateEl=document.getElementById("date");
 const today=new Date(); today.setHours(0,0,0,0);
 const maxd=new Date(today); maxd.setDate(maxd.getDate()+120);
 dateEl.min=iso(today); dateEl.max=iso(maxd);
-dateEl.onchange=()=>{ state.date=dateEl.value; showDateHint(); renderSlots(); validate(); };
+dateEl.onchange=()=>{ state.date=dateEl.value; haptic("sel"); showDateHint(); renderSlots(); validate(); };
 
 function stepGuests(n){
   const g=document.getElementById("guests");
   const mx=state.chalet?CH[state.chalet].maxg:15;
   let v=(parseInt(g.value)||1)+n; v=Math.max(1,Math.min(mx,v)); g.value=v;
-  if(state.chalet && CH[state.chalet].perGuest) renderSlots();
+  haptic();
+  if(state.chalet && CH[state.chalet].perGuest){ renderSlots(); bumpPrice(); }
   validate();
 }
+/* Небольшой «толчок» цены, когда она пересчиталась */
+function bumpPrice(){
+  const p=document.querySelector("#slots .slot .p");
+  if(p){ p.classList.remove("bump"); void p.offsetWidth; p.classList.add("bump"); }
+}
+
 ["guests","name","phone"].forEach(id=>document.getElementById(id).addEventListener("input",validate));
 // Число гостей меняет цену тапчана — перерисовываем слот.
 document.getElementById("guests").addEventListener("input",()=>{
-  if(state.chalet && CH[state.chalet].perGuest) renderSlots();
+  if(state.chalet && CH[state.chalet].perGuest){ renderSlots(); bumpPrice(); }
 });
 
 function validate(){
   const ok = state.chalet && state.date && state.slot &&
-    (parseInt(document.getElementById("guests").value)>0) &&
+    (guestsVal()>0) &&
     document.getElementById("name").value.trim().length>=2 &&
     digits(document.getElementById("phone").value)>=7;
   document.getElementById("btn").disabled=!ok;
+  updateProgress(); renderSummary();
   if(tg&&tg.MainButton){ if(ok){ tg.MainButton.setText(tr(T.submit)); tg.MainButton.show(); } else tg.MainButton.hide(); }
   return ok;
 }
@@ -363,8 +746,19 @@ function submitForm(){
     name:document.getElementById("name").value.trim(),
     phone:document.getElementById("phone").value.trim(),
     comment:document.getElementById("comment").value.trim() };
+  try{ if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success"); }catch(e){}
   if(tg&&tg.sendData){ tg.sendData(JSON.stringify(payload)); }
   else { alert(tr(T.not_tg)); }
+}
+
+/* Мягкое появление блоков при прокрутке */
+if("IntersectionObserver" in window){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+  },{rootMargin:"0px 0px -8% 0px", threshold:.06});
+  document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+}else{
+  document.querySelectorAll(".reveal").forEach(el=>el.classList.add("in"));
 }
 
 // стартовый язык — из Telegram

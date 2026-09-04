@@ -165,10 +165,13 @@ const T = {
   ph_name:{ru:"Ваше имя",uz:"Ismingiz",en:"Your name"},
   ph_comment:{ru:"День рождения, торт, оформление…",uz:"Tug‘ilgan kun, tort, bezak…",en:"Birthday, cake, decor…"},
   submit:{ru:"Отправить заявку",uz:"Arizani yuborish",en:"Send request"},
-  note:{ru:"Выходные (Сб, Вс) и праздники — +20%. Для подтверждения нужна предоплата 50%, возврат при отмене за 3+ дня. Бронь подтверждает наш сотрудник — он свяжется с вами.",
-        uz:"Dam olish kunlari (Sha, Yak) va bayramlar — +20%. Tasdiqlash uchun 50% oldindan to‘lov, 3+ kun oldin bekor qilinsa qaytariladi. Bronni xodimimiz tasdiqlaydi — u siz bilan bog‘lanadi.",
-        en:"Weekends (Sat, Sun) and holidays — +20%. A 50% prepayment confirms the booking, refundable if cancelled 3+ days ahead. Our staff confirms and will contact you."},
-  hint_we:{ru:"Выходной / праздник — цена +20%",uz:"Dam olish / bayram — +20%",en:"Weekend / holiday — +20%"},
+  note:{ru:"В стоимость входит бассейн с подогревом и блюда из меню ресторана до 1 000 000 сум. Для подтверждения нужна предоплата 50%, возврат при отмене за 3+ дня. Бронь подтверждает наш сотрудник — он свяжется с вами.",
+        uz:"Narxga isitiladigan basseyn va restoran menyusidan 1 000 000 so‘mgacha taomlar kiradi. Tasdiqlash uchun 50% oldindan to‘lov, 3+ kun oldin bekor qilinsa qaytariladi. Bronni xodimimiz tasdiqlaydi — u siz bilan bog‘lanadi.",
+        en:"Includes the heated pool and up to 1,000,000 UZS of dishes from the restaurant menu. A 50% prepayment confirms the booking, refundable if cancelled 3+ days ahead. Our staff confirms and will contact you."},
+  hint_we:{ru:"Выходной / праздник — цена выходного дня",uz:"Dam olish / bayram — dam olish kuni narxi",en:"Weekend / holiday — weekend rate"},
+  tap_note:{ru:"1 млн до 8 гостей, далее +100 000 за каждого · максимум 12 · без наценки в выходные",
+            uz:"8 mehmongacha 1 mln, keyin har biri +100 000 · ko‘pi bilan 12 · dam olish kunlarida qo‘shimcha haq yo‘q",
+            en:"1M for up to 8 guests, then +100,000 each · 12 max · no weekend surcharge"},
   hint_wd:{ru:"Будний день — базовая цена",uz:"Ish kuni — asosiy narx",en:"Weekday — base price"},
   pick_first:{ru:"Сначала выберите шале",uz:"Avval shaleni tanlang",en:"Choose a chalet first"},
   menu_show:{ru:"🍽 Меню ресторана",uz:"🍽 Restoran menyusi",en:"🍽 Restaurant menu"},
@@ -179,29 +182,54 @@ const T = {
           en:"Open this app from the Telegram bot to send a request."},
 };
 
+// Цены выходного дня (we) — ЯВНЫЕ суммы, а не «будни + процент».
 const CH = {
   comfort:{name:{ru:"Шале «Комфорт»",uz:"«Komfort» shale",en:"“Comfort” chalet"},
     cap:{ru:"ночёвка до 2 · до 8 гостей днём",uz:"tunash 2 gacha · kunduzi 8 mehmon",en:"overnight up to 2 · up to 8 daytime"},
-    img:"img/comfort.jpg", maxg:8,
-    wd:{1:"1,5 млн",2:"2 млн",3:"3 млн"}, we:{1:"1,8 млн",2:"2,4 млн",3:"3,6 млн"}},
+    img:"img/comfort.jpg", maxg:8, slots:[1,2,3],
+    wd:{1:"2,5 млн",2:"3 млн",3:"4 млн"}, we:{1:"2,8 млн",2:"3,4 млн",3:"4,6 млн"}},
   lux:{name:{ru:"«Президент Люкс»",uz:"«Prezident Lyuks»",en:"“President Lux”"},
     cap:{ru:"ночёвка до 7 · до 15 гостей",uz:"tunash 7 gacha · 15 mehmongacha",en:"overnight up to 7 · up to 15 guests"},
-    img:"img/lux.jpg", maxg:15,
-    wd:{1:"3 млн",2:"4 млн",3:"6 млн"}, we:{1:"3,6 млн",2:"4,8 млн",3:"7,2 млн"}},
+    img:"img/lux.jpg", maxg:15, slots:[1,2,3],
+    wd:{1:"4 млн",2:"5 млн",3:"7 млн"}, we:{1:"4,6 млн",2:"5,8 млн",3:"8,2 млн"}},
+  // Тапчан: только день, ночёвки нет. Цена зависит от числа гостей,
+  // наценки за выходные НЕТ — поэтому wd и we одинаковые.
+  tapchan:{name:{ru:"Тапчан",uz:"Tapchan",en:"Tapchan"},
+    cap:{ru:"только днём 10:00–20:00 · до 12 гостей",uz:"faqat kunduzi 10:00–20:00 · 12 mehmongacha",en:"daytime only 10:00–20:00 · up to 12 guests"},
+    img:"img/tapchan.jpg", maxg:12, slots:[4], perGuest:true,
+    wd:{4:"от 1 млн"}, we:{4:"от 1 млн"}},
 };
+// Тапчан: 1 млн до 8 гостей, далее +100 000 за каждого (максимум 12).
+const TAP={base:1000000, extra:100000, included:8, max:12};
+function tapchanPrice(g){
+  const n=Math.max(1,Math.min(parseInt(g)||TAP.included,TAP.max));
+  return TAP.base + Math.max(0,n-TAP.included)*TAP.extra;
+}
+function fmtSum(n){ return n.toLocaleString("ru-RU").replace(/,/g," ")+" сум"; }
 const SLOT={
   1:{ru:"☀️ День · 10:00–17:00",uz:"☀️ Kunduzi · 10:00–17:00",en:"☀️ Day · 10:00–17:00"},
   2:{ru:"🌙 Ночь · 18:00–09:00",uz:"🌙 Tun · 18:00–09:00",en:"🌙 Night · 18:00–09:00"},
   3:{ru:"🌗 Полный день · 10:00–09:00",uz:"🌗 To‘liq kun · 10:00–09:00",en:"🌗 Full day · 10:00–09:00"},
+  4:{ru:"🌤 День · 10:00–20:00",uz:"🌤 Kunduzi · 10:00–20:00",en:"🌤 Day · 10:00–20:00"},
 };
+// Меню Safo Restaurant 2026. Источник: https://safo-bio.netlify.app/menu/
+// Напитков в опубликованном меню нет — не добавляем, чтобы не показать неверные цены.
 const MENU=[
-  {c:{ru:"Шашлыки",uz:"Shashliklar",en:"Kebabs"}, it:[["Молотый шашлык","50 000"],["Корейка","85 000"],["Куриное бедро","45 000"],["Куриное филе","38 000"],["Куриные крылышки","40 000"]]},
-  {c:{ru:"Жиз",uz:"Jiz",en:"Jiz (roast)"}, it:[["Жиз Бон-филе (вырезка)","400 000 / кг"],["Жиз из корейки","350 000 / кг"]]},
-  {c:{ru:"Сеты и закуски",uz:"Setlar va gazaklar",en:"Sets & snacks"}, it:[["Пивной сет","120 000"],["Копчёная рыба","100 000"],["Чакка","20 000"],["Свежий салат","40 000"],["Лимон","15 000"],["Хлеб ассорти","26 000"]]},
-  {c:{ru:"Безалкогольные",uz:"Alkogolsiz",en:"Soft drinks"}, it:[["Кола / Фанта / Спрайт (1,5 л)","25 000"],["Минеральная вода (1,5 л)","15 000"],["Chortoq (0,5 л)","25 000"],["Сок ассорти","20 000"]]},
-  {c:{ru:"Пиво",uz:"Pivo",en:"Beer"}, it:[["Президент (0,5 л)","20 000"],["Шымкент (0,5 л)","25 000"],["Злата 10 (0,5 л)","20 000"],["Эфес","35 000"]]},
-  {c:{ru:"Чай",uz:"Choy",en:"Tea"}, it:[["Чёрный / Зелёный","10 000"],["Лимонный","20 000"]]},
-  {c:{ru:"Крепкие напитки",uz:"Kuchli ichimliklar",en:"Spirits"}, it:[["E Factor (0,5 л)","100 000"],["New Uzbekistan (0,5 л)","110 000"],["Gold UZB (0,7 л)","280 000"],["Столичное (0,5 л)","140 000"]]},
+  {c:{ru:"Завтраки",uz:"Nonushta",en:"Breakfast"}, it:[["Омлет с сыром и томатами","40 000"],["Глазунья из 3-х яиц","30 000"],["Рисовая каша с ягодами","45 000"],["Овсяная каша","45 000"],["Английский завтрак","70 000"],["Французский завтрак","100 000"],["Сырники с ягодным соусом","55 000"],["Шакшука","60 000"],["Национальный завтрак-сет","110 000"]]},
+  {c:{ru:"Закуски",uz:"Gazaklar",en:"Appetizers"}, it:[["Балтийский сет","220 000"],["Пивная доска","80 000"],["Чесночные гренки","40 000"],["Чечил фри","50 000"],["Закуска к пиву","150 000"],["Ассорти смёрребрёдов","240 000"]]},
+  {c:{ru:"Холодные закуски",uz:"Sovuq gazaklar",en:"Cold appetizers"}, it:[["Свежая нарезка овощей","70 000"],["Домашние маринады","90 000"],["Чакка","20 000"],["Язык телячий с соусом ромеско","120 000"],["Казы","120 000"],["Сет брускет","120 000"],["Буррата с томатами и песто","120 000"],["Норвежский лосось с сальсой из манго","130 000"],["Вителло Тоннато","120 000"],["Ассорти фермерских сыров","150 000"]]},
+  {c:{ru:"Салаты",uz:"Salatlar",en:"Salads"}, it:[["Микс свежих овощей с фетой","80 000"],["Микс-салат с авокадо и креветками","120 000"],["Большой зелёный салат","90 000"],["Салатный микс с тунцом","80 000"],["Гриль-салат в печи Josper","120 000"],["Цезарь с креветками","100 000"],["Цезарь с курицей","60 000"],["Ачичук","40 000"],["Чобан-салат","50 000"],["Чирокчи","40 000"],["Овощной салат с ореховым соусом","60 000"]]},
+  {c:{ru:"Горячие закуски",uz:"Issiq gazaklar",en:"Hot appetizers"}, it:[["Крылышки с соусом BBQ","75 000"],["Крылышки в соусе Том-ям","80 000"],["Креветки темпура","100 000"],["Долма","90 000"],["Самса с говядиной","15 000"],["Самса с бараниной","15 000"],["Креветки в соусе биск","170 000"],["Костный мозг с чимичурри","100 000"],["Бараньи семечки","90 000"],["Колбаски бараньи","60 000"],["Колбаски пикантные","60 000"],["Колбаски с сыром","60 000"],["Ассорти колбасок","150 000"],["Брокколи с соусом гамадари","80 000"]]},
+  {c:{ru:"Супы",uz:"Sho‘rvalar",en:"Soups"}, it:[["Чечевичный с тыквенными семенами","40 000"],["Сливочный с лососем и креветками","120 000"],["Крем-суп из брокколи","40 000"],["Крем-суп из шампиньонов","40 000"],["Мастава ташкентская","60 000"],["Нухат-шурак","100 000"],["Шурпа из баранины","120 000"],["Куриный суп с домашней лапшой","40 000"]]},
+  {c:{ru:"Стейки",uz:"Steyklar",en:"Steaks"}, it:[["Рибай с картофелем бэби","320 000"],["Стейк «Классик» с брокколи","250 000"],["Ассорти микс-стейков","800 000"]]},
+  {c:{ru:"Горячие блюда",uz:"Issiq taomlar",en:"Hot dishes"}, it:[["Медальоны с мацони","140 000"],["Каре ягнёнка","200 000"],["Филе-миньон с пюре и демигласом","180 000"],["Бон-филе с картофелем","170 000"],["Мясо по-кутаисски","250 000"],["Думгаза (бычий хвост)","200 000"],["Казан-кебаб из говядины","200 000"],["Казан-кебаб из баранины","200 000"],["Ассорти-гриль по-восточному","600 000"],["Жиз из бон-филе","400 000"],["Жиз из корейки ягнёнка","400 000"]]},
+  {c:{ru:"На мангале",uz:"Mangalda",en:"From the grill"}, it:[["Корейка ягнёнка","100 000"],["Куриные крылышки","50 000"],["Бараньи семечки","70 000"],["Курдюк","50 000"],["Молотый шашлык","55 000"],["Бедро куриное","50 000"],["Бон-филе","75 000"],["Овощной шашлык","30 000"],["Шашлык из сёмги","100 000"],["Микс-шашлык","350 000"]]},
+  {c:{ru:"Рыба",uz:"Baliq",en:"Fish"}, it:[["Филе лосося с икорным соусом","250 000"],["Филе дорадо со шпинатом","200 000"],["Лосось, запечённый с овощами","170 000"]]},
+  {c:{ru:"Паста",uz:"Pasta",en:"Pasta"}, it:[["Спагетти болоньезе","90 000"],["Вок с овощами терияки","60 000"],["Паста качо-э-пепе","60 000"],["Пенне аррабьята","80 000"],["Паста орзо с курицей и грибами","80 000"],["Ризотто с тигровыми креветками","150 000"]]},
+  {c:{ru:"Пицца",uz:"Pitsa",en:"Pizza"}, it:[["Маргарита","120 000"],["Пепперони","120 000"],["С курицей и грибами","120 000"],["Куатро формаджи","120 000"]]},
+  {c:{ru:"Гарниры",uz:"Garnirlar",en:"Sides"}, it:[["Рис на пару","20 000"],["Картофельное пюре","25 000"],["Овощное соте","35 000"],["Картофель бэби с пармезаном","30 000"],["Сезонные овощи на гриле","40 000"],["Хлебная корзина","30 000"]]},
+  {c:{ru:"Соусы",uz:"Souslar",en:"Sauces"}, it:[["Табаско","25 000"],["Свит-чили","15 000"],["Пеппер-верде","20 000"],["Матбуха","15 000"],["Ромеско","20 000"],["Шрирача","15 000"]]},
+  {c:{ru:"Десерты",uz:"Shirinliklar",en:"Desserts"}, it:[["Сан-Себастьян","50 000"],["Ягодный мильфей","50 000"],["Шоколадное суфле","50 000"],["Фруктовая нарезка","200 000"],["Тропическое ассорти","280 000"]]},
 ];
 
 let lang = "ru";
@@ -221,6 +249,9 @@ function renderChalets(){
     d.innerHTML=`<img src="${p.img}" alt=""><div class="body"><div class="t">${tr(p.name)}</div><div class="s">${tr(p.cap)}</div></div>`;
     d.onclick=()=>{ state.chalet=key;
       const g=document.getElementById("guests"); if(parseInt(g.value)>p.maxg) g.value=p.maxg; g.max=p.maxg;
+      // У тапчана слот один — выбираем его сразу; иначе сбрасываем чужой слот.
+      if(p.slots && p.slots.length===1) state.slot=p.slots[0];
+      else if(state.slot && p.slots && p.slots.indexOf(state.slot)<0) state.slot=null;
       renderChalets(); renderSlots(); validate(); };
     el.appendChild(d);
   });
@@ -228,14 +259,26 @@ function renderChalets(){
 function renderSlots(){
   const el=document.getElementById("slots"); el.innerHTML="";
   if(!state.chalet){ el.innerHTML=`<div class="hint">${tr(T.pick_first)}</div>`; return; }
-  const price=isWeekend(state.date)?CH[state.chalet].we:CH[state.chalet].wd;
-  [1,2,3].forEach(s=>{
+  const ch=CH[state.chalet];
+  const price=isWeekend(state.date)?ch.we:ch.wd;
+  (ch.slots||[1,2,3]).forEach(s=>{
     const d=document.createElement("div");
     d.className="glass slot"+(state.slot==s?" sel":"");
-    d.innerHTML=`<div class="t">${tr(SLOT[s])}</div><div class="p">${price[s]}</div>`;
+    // У тапчана цена зависит от числа гостей — показываем её сразу.
+    let p=price[s];
+    if(ch.perGuest){
+      const g=parseInt(document.getElementById("guests").value)||0;
+      p = g>0 ? fmtSum(tapchanPrice(g)) : price[s];
+    }
+    d.innerHTML=`<div class="t">${tr(SLOT[s])}</div><div class="p">${p}</div>`;
     d.onclick=()=>{ state.slot=s; renderSlots(); validate(); };
     el.appendChild(d);
   });
+  if(ch.perGuest){
+    const h=document.createElement("div");
+    h.className="hint"; h.textContent=tr(T.tap_note);
+    el.appendChild(h);
+  }
 }
 function renderMenu(){
   const el=document.getElementById("menu");
@@ -292,9 +335,15 @@ dateEl.onchange=()=>{ state.date=dateEl.value; showDateHint(); renderSlots(); va
 function stepGuests(n){
   const g=document.getElementById("guests");
   const mx=state.chalet?CH[state.chalet].maxg:15;
-  let v=(parseInt(g.value)||1)+n; v=Math.max(1,Math.min(mx,v)); g.value=v; validate();
+  let v=(parseInt(g.value)||1)+n; v=Math.max(1,Math.min(mx,v)); g.value=v;
+  if(state.chalet && CH[state.chalet].perGuest) renderSlots();
+  validate();
 }
 ["guests","name","phone"].forEach(id=>document.getElementById(id).addEventListener("input",validate));
+// Число гостей меняет цену тапчана — перерисовываем слот.
+document.getElementById("guests").addEventListener("input",()=>{
+  if(state.chalet && CH[state.chalet].perGuest) renderSlots();
+});
 
 function validate(){
   const ok = state.chalet && state.date && state.slot &&
